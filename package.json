@@ -1,0 +1,19 @@
+{
+  "name": "training-plan",
+  "version": "0.0.1",
+  "description": "Website to get training plans",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bkapteijns/training-plan.git"
+  },
+  "author": "Bram Kapteijns",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bkapteijns/training-plan/issues"
+  },
+  "homepage": "https://github.com/bkapteijns/training-plan#readme"
+}
