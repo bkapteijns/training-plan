@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/bkapteijns/training-plan/issues"
   },
-  "homepage": "https://github.com/bkapteijns/training-plan#readme"
+  "homepage": "https://github.com/bkapteijns/training-plan#readme",
+  "dependencies": {
+    "apollo-server": "^2.25.2",
+    "dotenv": "^10.0.0",
+    "graphql": "^15.5.1",
+    "mongoose": "^5.12.15",
+    "path": "^0.12.7"
+  }
 }
