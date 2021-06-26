@@ -23,10 +23,5 @@
     "mongoose": "^5.12.15",
     "path": "^0.12.7",
     "stripe": "^8.157.0"
-  },
-  "devDependencies": {
-    "eslint": "^7.29.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.23.4"
   }
 }
