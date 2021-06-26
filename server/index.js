@@ -3,6 +3,9 @@ const stripe = require("stripe")(
   "sk_test_51J6XHhGSqSbA8PYSRo15Mh32OmaTfz2bZu7SoQrdZ8sY6pSjbguVXqQLWFeQdwFfMGO7vlYclfNrvKp5bK852lsp00TeJTTvLE"
 );
 const nodemailer = require("nodemailer");
+const fs = require("fs");
+
+require("dotenv").config();
 
 const app = express();
 
@@ -42,28 +45,34 @@ app.post("/create-payment-intent", async (req, res) => {
 
 app.post("/send-introduction-email", async (req, res) => {
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
+  let transporter = await nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true, // true for 465, false for other ports
     auth: {
       type: "login", // other is oauth2
-      user: "trainingplan.fitness@gmail.com",
-      pass: "a1way5 B prot&#ted"
+      user: process.env.EMAIL_USERNAME, // "bramkapteijns03@gmail.com"
+      pass: process.env.EMAIL_SPECIFIC_PASSWORD //"My g00g1e pa5Sw0rd iS $3cure#"
     }
   });
 
   // send mail with defined transport object
   let info = await transporter.sendMail(
     {
-      from: '"Training" <trainingplan.fitness@gmail.com>', // sender address
+      from: `"Training" <${process.env.EMAIL_USERNAME}>`, // sender address
       to: "bram_kapteijns@hotmail.com", // list of receivers
       subject: "Testing email", // Subject line
       text: "This mail has been sent with my app", // plain text body
-      html: "<b>This mail has been sent with my app</b>" // html body
+      html: '<b style="color: red;">This mail has been sent with my app</b>', // html body
+      attachments: [
+        {
+          filename: "test.pdf",
+          content: fs.createReadStream("./data/test.pdf")
+        }
+      ]
     },
     (error, info) => {
-      if (error) return console.error(error);
+      if (error) return console.error("Error: ", error);
       console.log("Message sent: " + JSON.stringify(info));
     }
   );
