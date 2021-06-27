@@ -7,9 +7,6 @@ import {
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import axios from "axios";
 
-import dotenv from "dotenv";
-dotenv.config();
-
 export default function IdealPaymentForm() {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
@@ -21,16 +18,12 @@ export default function IdealPaymentForm() {
   const elements = useElements();
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_SERVER_URI + "create-payment-intent");
     axios
-      .post(process.env.REACT_APP_SERVER_URI + "create-payment-intent", {
+      .post(`${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`, {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: [] })
       })
-      .then((res) => {
-        console.log(res.data);
-        return res.data;
-      })
+      .then((res) => res.data)
       .then((data) => setClientSecret(data.clientSecret));
   }, []);
 
