@@ -133,15 +133,20 @@ app.put("/api/login", async (req, res) => {
 
 app.get("/program", (req, res) => {
   const { program, day, programToken } = req.query;
-  if (!program || !day || !programToken) res.sendStatus(400);
+  if (!program || !day) return res.status(400).send("Specify a program");
   // test whether the user has rights for the program
   if (verifyProgramToken(programToken, program) || program === "basic") {
-    fs.access(path.join(__dirname, program, `${day}.html`), (err) => {
-      if (err) return res.status(400).send("Program not available");
-      return res.sendFile(path.join(__dirname, program, `${day}.html`));
-    });
+    return fs.access(
+      path.join(__dirname, "programs", program, `${day}.html`),
+      (err) => {
+        if (err) return res.status(400).send("Program not available");
+        return res.sendFile(
+          path.join(__dirname, "programs", program, `${day}.html`)
+        );
+      }
+    );
   }
-  res.status(400).send("Program has not been purchased");
+  return res.status(400).send("Program has not been purchased");
 });
 
 mongoose
