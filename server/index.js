@@ -41,6 +41,19 @@ const verifyProgramToken = (token, program) => {
     return false;
   }
 };
+const createUserToken = (id) => {
+  return jwt.sign({}, process.env.SECRET_KEY, {
+    expiresIn: "1d",
+    subject: id.toString()
+  });
+};
+const verifyUserToken = (token) => {
+  try {
+    return User.findOne({ _id: jwt.verify(token, process.env.SECRET_KEY).sub });
+  } catch (e) {
+    return null;
+  }
+};
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -128,7 +141,14 @@ app.post("/api/register", async (req, res) => {
     return res.status(400).send("Email and password are mandatory");
   if ((await User.find({ email })).length > 0) {
     const u = await User.findOne({ email, password });
-    if (u) return res.status(200).send(u);
+    if (u)
+      return res
+        .status(200)
+        .send({
+          ...u._doc,
+          programToken: createProgramToken(u.programs),
+          loginToken: createUserToken(u._id)
+        });
     return res.status(400).send("User already exists");
   }
   const user = await new User({
@@ -137,9 +157,11 @@ app.post("/api/register", async (req, res) => {
     programs: []
   });
   await user.save();
-  return res
-    .status(201)
-    .send({ ...user, programToken: createProgramToken(user.programs) });
+  return res.status(201).send({
+    ...user._doc,
+    programToken: createProgramToken(user.programs),
+    loginToken: createUserToken(user._id)
+  });
 });
 app.put("/api/login", async (req, res) => {
   const { email, password } = req.body;
@@ -147,9 +169,22 @@ app.put("/api/login", async (req, res) => {
     return res.status(400).send("Email and password are mandatory");
   const user = await User.findOne({ email, password });
   if (!user) return res.status(400).send("Invalid credentials");
-  return res
-    .status(200)
-    .send({ ...user, programToken: createProgramToken(user.programs) });
+  return res.status(200).send({
+    ...user._doc,
+    programToken: createProgramToken(user.programs),
+    loginToken: createUserToken(user._id)
+  });
+});
+app.put("/api/relogin", async (req, res) => {
+  const { token } = req.body;
+  const user = await verifyUserToken(token);
+  if (user)
+    return res.status(200).send({
+      ...user._doc,
+      programToken: createProgramToken(user.programs),
+      loginToken: createUserToken(user._id)
+    });
+  return res.status(400).send();
 });
 
 app.get("/program", (req, res) => {
