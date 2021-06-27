@@ -17,16 +17,6 @@ export default function IdealPaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  useEffect(() => {
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`, {
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: [] })
-      })
-      .then((res) => res.data)
-      .then((data) => setClientSecret(data.clientSecret));
-  }, []);
-
   const handleChange = async (e) => {
     setDisabled(e.empty);
     setError(e.error ? e.error.message : "");
@@ -36,15 +26,22 @@ export default function IdealPaymentForm() {
     e.preventDefault();
     setProcessing(true);
 
-    const payload = await stripe.confirmIdealPayment(clientSecret, {
-      payment_method: { ideal: elements.getElement(IdealBankElement) },
-      return_url: process.env.REACT_APP_PAYMENT_RETURN
-    });
-
-    if (payload.error) {
-      setError(`Payment failed ${payload.error.message}`);
-      return setProcessing(false);
-    }
+    await axios
+      .post(`${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`, {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: [] })
+      })
+      .then((res) => res.data)
+      .then(async (data) => {
+        const payload = stripe.confirmIdealPayment(data.clientSecret, {
+          payment_method: { ideal: elements.getElement(IdealBankElement) },
+          return_url: process.env.REACT_APP_PAYMENT_RETURN
+        });
+        if (payload.error) {
+          setError(`Payment failed ${payload.error.message}`);
+          return setProcessing(false);
+        }
+      });
     setError(null);
     setSucceeded(true);
     return setProcessing(false);

@@ -131,11 +131,11 @@ app.put("/api/login", async (req, res) => {
     .send({ ...user, programToken: createProgramToken(user.programs) });
 });
 
-app.get("/programs", (req, res) => {
+app.get("/program", (req, res) => {
   const { program, day, programToken } = req.query;
   if (!program || !day || !programToken) res.sendStatus(400);
   // test whether the user has rights for the program
-  if (verifyProgramToken(programToken, program)) {
+  if (verifyProgramToken(programToken, program) || program === "basic") {
     fs.access(path.join(__dirname, program, `${day}.html`), (err) => {
       if (err) return res.status(400).send("Program not available");
       return res.sendFile(path.join(__dirname, program, `${day}.html`));

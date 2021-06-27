@@ -25,7 +25,7 @@ export default function LandingScreen({ setAccount }) {
                   })
                   .then((res) => res.data)
                   .then((data) => setAccount(data))
-                  .catch((e) => console.error(e));
+                  .catch((err) => console.error(err));
                 setAccountEmail("");
                 setAccountPassword("");
               }}
