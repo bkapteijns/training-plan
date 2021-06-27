@@ -7,7 +7,7 @@ import {
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import axios from "axios";
 
-export default function IdealPaymentForm() {
+export default function IdealPaymentForm({ emailAddress }) {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
@@ -41,7 +41,13 @@ export default function IdealPaymentForm() {
           setError(`Payment failed ${payload.error.message}`);
           return setProcessing(false);
         }
-      });
+      })
+      .then(() =>
+        axios.post(
+          `${process.env.REACT_APP_SERVER_URI}api/send-purchase-confirmation-email`,
+          { emailAddress }
+        )
+      );
     setError(null);
     setSucceeded(true);
     return setProcessing(false);

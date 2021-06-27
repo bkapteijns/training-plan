@@ -100,6 +100,27 @@ app.post("/api/send-introduction-email", async (req, res) => {
     );
   else res.sendStatus(400);
 });
+app.post("/api/send-purchase-confirmation-email", async (req, res) => {
+  const { emailAddress } = req.body;
+  if (emailAddress)
+    await transporter.sendMail(
+      {
+        from: `"trainingplan.fitness" <${process.env.EMAIL_USERNAME}>`, // sender address
+        to: emailAddress, // list of receivers
+        subject: "Testing email", // Subject line
+        text: "This email has been sent with my app", // plain text body
+        html: "<b>Thanks for buying a program!</b>" // html body
+      },
+      (error, info) => {
+        if (error) {
+          console.error("Error: ", error);
+          res.sendStatus(400);
+        }
+        res.sendStatus(201);
+      }
+    );
+  else res.sendStatus(400);
+});
 
 app.post("/api/register", async (req, res) => {
   const { email, password } = req.body;
