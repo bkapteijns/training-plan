@@ -11,6 +11,7 @@ const { ApolloServer } = require("apollo-server-express");
 
 const { typeDefs, resolvers } = require("./graphql/index");
 const { calculateOrderAmount, verifyProgramToken } = require("./utils");
+const Email = require("./EmailSchema");
 
 const app = express();
 
@@ -58,7 +59,13 @@ app.post("/api/create-payment-intent", async (req, res) => {
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
   // send mail with defined transport object
-  if (emailAddress)
+  if (emailAddress) {
+    if ((await Email.find({ address: emailAddress })).length === 0) {
+      await new Email({
+        address: emailAddress,
+        creationDate: Date.now()
+      }).save();
+    }
     await transporter.sendMail(
       {
         from: `"trainingplan.fitness" <${process.env.EMAIL_USERNAME}>`, // sender address
@@ -81,7 +88,7 @@ app.post("/api/send-introduction-email", async (req, res) => {
         res.sendStatus(201);
       }
     );
-  else res.sendStatus(400);
+  } else res.sendStatus(400);
 });
 app.post("/api/send-purchase-confirmation-email", async (req, res) => {
   const { emailAddress } = req.body;
