@@ -5,12 +5,12 @@ const stripe = require("stripe")(
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const fs = require("fs");
-const url = require("url");
 const path = require("path");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const { ApolloServer } = require("apollo-server-express");
 
-const User = require("./UserSchema");
+const { typeDefs, resolvers } = require("./graphql/index");
+const { calculateOrderAmount, verifyProgramToken } = require("./utils");
 
 const app = express();
 
@@ -122,6 +122,10 @@ app.get("/program", (req, res) => {
   }
   return res.status(400).send("Program has not been purchased");
 });
+
+/******************** GraphQL endpoint */
+const graphqlServer = new ApolloServer({ typeDefs, resolvers });
+graphqlServer.applyMiddleware({ app, path: "/api/graphql" });
 
 mongoose
   .connect(process.env.DATABASE_URI, {

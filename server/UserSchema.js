@@ -1,6 +1,6 @@
 const { model, Schema, SchemaType } = require("mongoose");
 
-class Program extends SchemaType {
+/*class Program extends SchemaType {
   constructor(key, options) {
     super(key, options, "Program");
   }
@@ -17,12 +17,20 @@ class Program extends SchemaType {
       currentDay: val.currentDay
     };
   }
-}
+}*/
 
 const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
-  programs: { type: [Program], required: true },
+  programs: {
+    type: [
+      {
+        name: { type: String, required: true },
+        currentDay: { type: Number, required: true }
+      }
+    ],
+    required: true
+  },
   ownedEquipment: { type: [String], required: true }
 });
 

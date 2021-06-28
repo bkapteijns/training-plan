@@ -1,4 +1,4 @@
-const { model, Schema, SchemaType } = require("mongoose");
+const { model, Schema } = require("mongoose");
 
 const programSchema = new Schema({
   name: { type: String, required: true },
@@ -6,4 +6,4 @@ const programSchema = new Schema({
   equipment: { type: [String], required: true }
 });
 
-module.exports = model("User", programSchema);
+module.exports = model("Program", programSchema);

@@ -9,8 +9,8 @@ const userResolvers = {
   Query: {
     relogin: async (parent, { token }, context, info) => {
       const { _id } = verifyUserToken(token);
-      const user = User.findOne({ _id });
-      return user ? u._doc : new AuthenticationError("Invalid token");
+      const user = await User.findOne({ _id });
+      return user ? user._doc : new AuthenticationError("Invalid token");
     }
   },
   Mutation: {
@@ -25,15 +25,16 @@ const userResolvers = {
       if ((await User.find({ email })).length > 0) {
         const u = await User.findOne({
           email,
-          password: hash.sha.sha256(`${email}-${password}`)
+          password: hash.sha256().update(`${email}-${password}`).digest("hex")
         });
         if (u) return u._doc;
         return new AuthenticationError("User already exists");
       }
       const user = await new User({
         email,
-        password: hash.sha.sha256(`${email}-${password}`),
-        programs: []
+        password: hash.sha256().update(`${email}-${password}`).digest("hex"),
+        programs: [],
+        ownedEquipment: []
       });
       await user.save();
       return user._doc;

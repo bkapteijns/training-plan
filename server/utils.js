@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 module.exports = {
   createProgramToken: (program) => {
     return jwt.sign({ program }, process.env.SECRET_KEY, { expiresIn: "1h" });
