@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Row, Col, Form, Button, Image } from "react-bootstrap";
 import axios from "axios";
 
-export default function LandingScreen({ setAccount }) {
+export default function LandingScreen({ setAccount, setReloginToken }) {
   const [accountEmail, setAccountEmail] = useState("");
   const [accountPassword, setAccountPassword] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
@@ -16,21 +16,42 @@ export default function LandingScreen({ setAccount }) {
         <Row style={{ marginTop: 50 }}>
           <Col>
             <Form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                axios
-                  .post(`${process.env.REACT_APP_SERVER_URI}api/register`, {
-                    email: accountEmail,
-                    password: accountPassword
+                await axios
+                  .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+                    query: `mutation loginMutation($userInput: UserInput!) {
+                      login(userInput: $userInput) {
+                        token
+                        email
+                        ownedEquipment
+                        programs {
+                          name
+                          token
+                          days
+                          currentDay
+                          equipment
+                        }
+                      }
+                    }`,
+                    variables: {
+                      userInput: {
+                        email: accountEmail,
+                        password: accountPassword
+                      }
+                    }
                   })
-                  .then((res) => res.data)
-                  .then((data) => setAccount(data))
+                  .then((res) => res.data.data.login)
+                  .then((data) => {
+                    setAccount(data);
+                    setReloginToken(data.token);
+                  })
                   .catch((err) => console.error(err));
                 setAccountEmail("");
                 setAccountPassword("");
               }}
             >
-              <Form.Label>Create an account</Form.Label>
+              <Form.Label>Create an account and recieve the ebook</Form.Label>
               <Form.Group controlId="accountEmail" as={Row}>
                 <Col md={4}>
                   <Form.Label>Email</Form.Label>

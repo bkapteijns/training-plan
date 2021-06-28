@@ -1,25 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import axios from "axios";
 
 import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
 
-const usePersistentState = () => {
-  const [state, setInternalState] = useState(() => window.history.state || {});
+const usePersistentState = (item) => {
+  const [state, rawSetState] = useState(
+    () => window.localStorage.getItem(item) || null
+  );
   const setState = (newState) => {
-    window.history.replaceState({ ...state, ...newState }, document.title);
-    setInternalState(newState);
+    window.localStorage.setItem(item, newState);
+    rawSetState(newState);
   };
   return [state, setState];
 };
 
 export default function App() {
-  const [account, setAccount] = usePersistentState();
+  const [account, setAccount] = useState();
+  const [reloginToken, setReloginToken] = usePersistentState("reloginToken");
 
-  useEffect(() => console.log(account), [account]);
+  window.onload = async (e) => {
+    reloginToken &&
+      (await axios
+        .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+          query: `query reloginMutation($token: String!) {
+          relogin(token: $token) {
+            token
+            email
+            ownedEquipment
+            programs {
+              name
+              token
+              days
+              currentDay
+              equipment
+            }
+          }
+        }`,
+          variables: {
+            token: reloginToken
+          }
+        })
+        .then((res) => {
+          console.log(res);
+          return res.data.data.relogin;
+        })
+        .then((data) => {
+          setAccount(data);
+          setReloginToken(data.token);
+        })
+        .catch((err) => {
+          setAccount(null);
+          setReloginToken(null);
+          console.log(err);
+        }));
+  };
 
   return (
     <BrowserRouter>
@@ -28,7 +67,10 @@ export default function App() {
         <Link to="/programs">Look at the different programs</Link>
       </Route>
       <Route path="/landing">
-        <LandingScreen setAccount={setAccount} />
+        <LandingScreen
+          setAccount={setAccount}
+          setReloginToken={setReloginToken}
+        />
       </Route>
       <Route path="/programs" exact>
         <ProgramsScreen />

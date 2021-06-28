@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   IdealBankElement,
   useStripe,
@@ -12,7 +12,7 @@ export default function IdealPaymentForm({ emailAddress }) {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
   const [disabled, setDisabled] = useState(true);
-  const [clientSecret, setClientSecret] = useState("");
+  // const [clientSecret, setClientSecret] = useState("");
 
   const stripe = useStripe();
   const elements = useElements();

@@ -8,9 +8,14 @@ const { createUserToken, verifyUserToken } = require("../utils");
 const userResolvers = {
   Query: {
     relogin: async (parent, { token }, context, info) => {
-      const { _id } = verifyUserToken(token);
-      const user = await User.findOne({ _id });
-      return user ? user._doc : new AuthenticationError("Invalid token");
+      try {
+        const { _id } = verifyUserToken(token);
+        const user = await User.findOne({ _id });
+        return user._doc;
+      } catch (e) {
+        console.log(e);
+        return new AuthenticationError("Invalid token");
+      }
     }
   },
   Mutation: {
