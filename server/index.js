@@ -30,30 +30,6 @@ app.use((req, res, next) => {
   return next();
 });
 
-/*********** Helper functions */
-const createProgramToken = (programs) => {
-  return jwt.sign({ programs }, process.env.SECRET_KEY, { expiresIn: "1h" });
-};
-const verifyProgramToken = (token, program) => {
-  try {
-    return jwt.verify(token, process.env.SECRET_KEY).programs.includes(program);
-  } catch (e) {
-    return false;
-  }
-};
-const createUserToken = (id) => {
-  return jwt.sign({}, process.env.SECRET_KEY, {
-    expiresIn: "1d",
-    subject: id.toString()
-  });
-};
-const verifyUserToken = (token) => {
-  try {
-    return User.findOne({ _id: jwt.verify(token, process.env.SECRET_KEY).sub });
-  } catch (e) {
-    return null;
-  }
-};
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -61,16 +37,10 @@ const transporter = nodemailer.createTransport({
   secure: true, // true for 465, false for other ports
   auth: {
     type: "login", // other is oauth2
-    user: process.env.EMAIL_USERNAME, // "bramkapteijns03@gmail.com"
-    pass: process.env.EMAIL_SPECIFIC_PASSWORD //"My g00g1e pa5Sw0rd iS $3cure#"
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_SPECIFIC_PASSWORD
   }
 });
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-  return 1000;
-};
 
 /**************** REST endpoint */
 app.post("/api/create-payment-intent", async (req, res) => {
@@ -133,58 +103,6 @@ app.post("/api/send-purchase-confirmation-email", async (req, res) => {
       }
     );
   else res.sendStatus(400);
-});
-
-app.post("/api/register", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).send("Email and password are mandatory");
-  if ((await User.find({ email })).length > 0) {
-    const u = await User.findOne({ email, password });
-    if (u)
-      return res
-        .status(200)
-        .send({
-          ...u._doc,
-          programToken: createProgramToken(u.programs),
-          loginToken: createUserToken(u._id)
-        });
-    return res.status(400).send("User already exists");
-  }
-  const user = await new User({
-    email: email,
-    password: password,
-    programs: []
-  });
-  await user.save();
-  return res.status(201).send({
-    ...user._doc,
-    programToken: createProgramToken(user.programs),
-    loginToken: createUserToken(user._id)
-  });
-});
-app.put("/api/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).send("Email and password are mandatory");
-  const user = await User.findOne({ email, password });
-  if (!user) return res.status(400).send("Invalid credentials");
-  return res.status(200).send({
-    ...user._doc,
-    programToken: createProgramToken(user.programs),
-    loginToken: createUserToken(user._id)
-  });
-});
-app.put("/api/relogin", async (req, res) => {
-  const { token } = req.body;
-  const user = await verifyUserToken(token);
-  if (user)
-    return res.status(200).send({
-      ...user._doc,
-      programToken: createProgramToken(user.programs),
-      loginToken: createUserToken(user._id)
-    });
-  return res.status(400).send();
 });
 
 app.get("/program", (req, res) => {

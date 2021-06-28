@@ -21,6 +21,7 @@
     "apollo-server-express": "^2.25.2",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.1",
+    "hash.js": "^1.1.7",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.15",
     "nodemailer": "^6.6.2",
