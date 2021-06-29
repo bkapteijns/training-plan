@@ -19,9 +19,7 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                 const errors = {};
                 if (!validator.isEmail(values.email))
                   errors.email = "Provide a valid email address";
-                if (
-                  !validator.isStrongPassword(values.password, { minLength: 8 })
-                )
+                if (values.password.length < 8)
                   errors.password = "Password must be at least 8 characters";
                 return errors;
               }}
@@ -30,25 +28,26 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                 await axios
                   .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
                     query: `mutation loginMutation($userInput: UserInput!) {
-                  login(userInput: $userInput) {
-                    token
-                    email
-                    ownedEquipment
-                    programs {
-                      name
-                      token
-                      days
-                      currentDay
-                      equipment
-                    }
-                  }
-                }`,
+                      login(userInput: $userInput) {
+                        token
+                        email
+                        ownedEquipment
+                        programs {
+                          name
+                          token
+                          days
+                          currentDay
+                          equipment
+                        }
+                      }
+                    }`,
                     variables: {
                       userInput: values
                     }
                   })
                   .then((res) => res.data.data.login)
                   .then((data) => {
+                    console.log(data);
                     setAccount(data);
                     setReloginToken(data.token);
                   })

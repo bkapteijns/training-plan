@@ -6,12 +6,13 @@ import validator from "validator";
 // import serialize from "serialize-javascript"; This is used for setting tings as json.stringify(...)
 // import purify from "dompurify"; This is used for adding things to the dom
 
+import Header from "./components/Header";
 import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
 
-const usePersistentState = (item) => {
+const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
     () => window.localStorage.getItem(item) || null
   );
@@ -22,16 +23,31 @@ const usePersistentState = (item) => {
   return [state, setState];
 };
 
+const useSessionStorage = (item) => {
+  const [state, rawSetState] = useState(() =>
+    window.sessionStorage.getItem(item)
+      ? window.sessionStorage.getItem(item).split(",")
+      : []
+  );
+  const setState = (newState) => {
+    window.sessionStorage.setItem(newState.toString());
+    rawSetState(newState);
+  };
+  return [state, setState];
+};
+
 export default function App() {
   const [account, setAccount] = useState();
-  const [reloginToken, setReloginToken] = usePersistentState("reloginToken");
+  const [programs, setPrograms] = useState();
+  const [reloginToken, setReloginToken] = useLocalStorage("reloginToken");
+  const [basket, setBasket] = useSessionStorage("basket");
 
   window.onload = async (e) => {
     reloginToken &&
       validator.isJWT(reloginToken) &&
       (await axios
         .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-          query: `query reloginMutation($token: String!) {
+          query: `query reloginQuery($token: String!) {
           relogin(token: $token) {
             token
             email
@@ -49,10 +65,7 @@ export default function App() {
             token: reloginToken
           }
         })
-        .then((res) => {
-          console.log(res);
-          return res.data.data.relogin;
-        })
+        .then((res) => res.data.data.relogin)
         .then((data) => {
           setAccount(data);
           setReloginToken(data.token);
@@ -62,10 +75,31 @@ export default function App() {
           setReloginToken(null);
           console.log(err);
         }));
+
+    await axios
+      .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+        query: `query getProgramsQuery {
+          getPrograms {
+            name
+            token
+            days
+            currentDay
+            equipment
+          }
+        }`
+      })
+      .then((res) => res.data.data.getPrograms)
+      .then((data) => setPrograms(data))
+      .catch((err) => console.log(err));
+    console.log(account, programs);
   };
 
   return (
     <BrowserRouter>
+      <Header
+        ownedPrograms={account ? account.programs : []}
+        allPrograms={programs}
+      />
       <Route path="/" exact>
         <Link to="/programs">Look at the different programs</Link>
       </Route>
