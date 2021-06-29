@@ -63,10 +63,7 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
             style={{ marginRight: 5 }}
             onClick={() => history.push("/login")}
           >
-            Login
-          </Button>
-          <Button variant="light" onClick={() => history.push("/register")}>
-            Register
+            Login or register
           </Button>
           {basket && basket.length > 0 && <Button>Purchase</Button>}
         </Nav>
