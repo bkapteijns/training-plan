@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import axios from "axios";
+import validator from "validator";
+// import serialize from "serialize-javascript"; This is used for setting tings as json.stringify(...)
+// import purify from "dompurify"; This is used for adding things to the dom
 
 import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
@@ -25,6 +28,7 @@ export default function App() {
 
   window.onload = async (e) => {
     reloginToken &&
+      validator.isJWT(reloginToken) &&
       (await axios
         .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
           query: `query reloginMutation($token: String!) {
@@ -62,7 +66,6 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div>{JSON.stringify(account)}</div>
       <Route path="/" exact>
         <Link to="/programs">Look at the different programs</Link>
       </Route>

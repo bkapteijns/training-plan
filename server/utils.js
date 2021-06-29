@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 module.exports = {
   createProgramToken: (program) => {
@@ -6,9 +7,8 @@ module.exports = {
   },
   verifyProgramToken: (token, program) => {
     try {
-      return jwt
-        .verify(token, process.env.SECRET_KEY)
-        .programs.includes(program);
+      if (!validator.isJWT(token)) throw new Error("Token must be valid JWT");
+      return jwt.verify(token, process.env.SECRET_KEY).program === program;
     } catch (e) {
       return false;
     }
@@ -21,6 +21,7 @@ module.exports = {
   },
   verifyUserToken: (token) => {
     try {
+      if (!validator.isJWT(token)) throw new Error("Token must be a valid JWT");
       return {
         _id: jwt.verify(token, process.env.SECRET_KEY).sub
       };

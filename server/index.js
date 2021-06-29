@@ -8,6 +8,7 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 const { ApolloServer } = require("apollo-server-express");
+const validator = require("validator");
 
 const { typeDefs, resolvers } = require("./graphql/index");
 const { calculateOrderAmount, verifyProgramToken } = require("./utils");
@@ -59,7 +60,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
   // send mail with defined transport object
-  if (emailAddress) {
+  if (emailAddress && validator.isEmail(emailAddress)) {
     if ((await Email.find({ address: emailAddress })).length === 0) {
       await new Email({
         address: emailAddress,
@@ -92,7 +93,7 @@ app.post("/api/send-introduction-email", async (req, res) => {
 });
 app.post("/api/send-purchase-confirmation-email", async (req, res) => {
   const { emailAddress } = req.body;
-  if (emailAddress)
+  if (emailAddress && validator.isEmail(emailAddress))
     await transporter.sendMail(
       {
         from: `"trainingplan.fitness" <${process.env.EMAIL_USERNAME}>`, // sender address
@@ -116,7 +117,12 @@ app.get("/program", (req, res) => {
   const { program, day, programToken } = req.query;
   if (!program || !day) return res.status(400).send("Specify a program");
   // test whether the user has rights for the program
-  if (verifyProgramToken(programToken, program) || program === "basic") {
+  if (
+    (verifyProgramToken(programToken, program) || program === "basic") &&
+    !program.includes(".") &&
+    !day.includes(".") && // we do not want the situation: program/../../index.js
+    validator.isInt(day) // the day should be an integer
+  ) {
     return fs.access(
       path.join(__dirname, "programs", program, `${day}.html`),
       (err) => {

@@ -1,5 +1,6 @@
 const hash = require("hash.js");
 const { UserInputError, AuthenticationError } = require("apollo-server");
+const validator = require("validator");
 require("dotenv").config();
 
 const User = require("../UserSchema");
@@ -27,13 +28,15 @@ const userResolvers = {
     ) => {
       if (!email || !password)
         return new UserInputError("Enter email and password");
+      if (!validator.isEmail(email))
+        return new UserInputError("Provide a valid email address");
       if ((await User.find({ email })).length > 0) {
         const u = await User.findOne({
           email,
           password: hash.sha256().update(`${email}-${password}`).digest("hex")
         });
         if (u) return u._doc;
-        return new AuthenticationError("User already exists");
+        return new AuthenticationError("Invalid credentials");
       }
       const user = await new User({
         email,
