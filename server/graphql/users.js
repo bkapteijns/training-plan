@@ -41,7 +41,7 @@ const userResolvers = {
       const user = await new User({
         email,
         password: hash.sha256().update(`${email}-${password}`).digest("hex"),
-        programs: [],
+        programs: [{ name: "basic", currentDay: 0 }],
         ownedEquipment: []
       });
       await user.save();
@@ -57,6 +57,7 @@ const userResolvers = {
       parent.programs
         ? parent.programs.map(async (p) => {
             const program = await Program.findOne({ name: p.name });
+            if (!program) return new UserInputError("program does not exist");
             return {
               ...program._doc,
               currentDay: p.currentDay

@@ -53,10 +53,41 @@ app.post("/api/create-payment-intent", async (req, res) => {
     currency: "eur",
     payment_method_types: ["ideal"]
   });
+  console.log(paymentIntent);
   res.send({
+    id: paymentIntent.id,
     clientSecret: paymentIntent.client_secret
   });
 });
+app.post("/api/cancel-payment-intent", async (req, res) => {
+  const { id } = req.body;
+  if (id.startsWith("pi_")) console.log(await stripe.paymentIntents.cancel(id));
+  res.status(204).send();
+});
+app.post(
+  "/api/stripe-webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    // MAKE SURE WHETHER THE REQUEST CAME FROM STRIPE
+    console.log(req.body);
+    const { type, data } = req.body;
+    switch (type) {
+      case "payment_intent.succeeded":
+        console.log(type, JSON.stringify(data));
+        break;
+      case "payment_intent.cancelled":
+        console.log(type, JSON.stringify(data));
+        break;
+      case "payment_intent.payment_failed":
+        console.log(type, JSON.stringify(data));
+        break;
+      default:
+        console.log(`No webhook defined for ${type}`);
+        break;
+    }
+    res.send({ received: true });
+  }
+);
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
   // send mail with defined transport object
