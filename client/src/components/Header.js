@@ -3,7 +3,8 @@ import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
 export default function Header({ ownedPrograms, allPrograms, basket }) {
-  const [dropdownExpanded, setDropdownExpanded] = useState(false);
+  const [programsExpanded, setProgramsExpanded] = useState(false);
+  const [basketExpanded, setBasketExpanded] = useState(false);
 
   const history = useHistory();
 
@@ -23,10 +24,10 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
             title={
               <span onClick={() => history.push("/programs")}>Programs</span>
             }
-            id="hover-dropdown"
-            show={dropdownExpanded}
-            onMouseEnter={() => setDropdownExpanded(true)}
-            onMouseLeave={() => setDropdownExpanded(false)}
+            id="program-dropdown"
+            show={programsExpanded}
+            onMouseEnter={() => setProgramsExpanded(true)}
+            onMouseLeave={() => setProgramsExpanded(false)}
           >
             <NavDropdown.Header>Your programs</NavDropdown.Header>
             {ownedPrograms &&
@@ -65,7 +66,34 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
           >
             Login or register
           </Button>
-          {basket && basket.length > 0 && <Button>Purchase</Button>}
+          {basket && basket.length > 0 && (
+            <NavDropdown
+              title={
+                <span onClick={() => history.push("/basket")}>Basket</span>
+              }
+              id="shopping-basket-dropdown"
+              alignRight
+              show={basketExpanded}
+              onMouseEnter={() => setBasketExpanded(true)}
+              onMouseLeave={() => setBasketExpanded(false)}
+            >
+              <NavDropdown.Header>Programs:</NavDropdown.Header>
+              {basket.map((i) => (
+                <NavDropdown.ItemText>
+                  {i
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\w\S*/g, (w) =>
+                      w.replace(/^\w/, (c) => c.toUpperCase())
+                    )}
+                </NavDropdown.ItemText>
+              ))}
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={() => history.push("/payment")}>
+                Purchase now
+              </NavDropdown.Item>
+            </NavDropdown>
+          )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>

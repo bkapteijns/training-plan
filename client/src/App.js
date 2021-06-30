@@ -99,6 +99,7 @@ export default function App() {
       <Header
         ownedPrograms={account ? account.programs : []}
         allPrograms={programs}
+        basket={basket}
       />
       <Route path="/" exact>
         <Link to="/programs">Look at the different programs</Link>
