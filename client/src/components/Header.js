@@ -39,6 +39,7 @@ export default function Header({
             {ownedPrograms &&
               ownedPrograms.map((p) => (
                 <NavDropdown.Item
+                  key={p.name}
                   onClick={() => {
                     history.push("/programs/basic");
                   }}
@@ -62,6 +63,7 @@ export default function Header({
                 )
                 .map((p) => (
                   <NavDropdown.Item
+                    key={p.name}
                     onClick={() => history.push(`/programs/${p.name}`)}
                   >
                     {p.name
@@ -105,7 +107,7 @@ export default function Header({
             >
               <NavDropdown.Header>Programs</NavDropdown.Header>
               {basket.map((i) => (
-                <NavDropdown.ItemText>
+                <NavDropdown.ItemText key={i}>
                   {i
                     .trim()
                     .toLowerCase()

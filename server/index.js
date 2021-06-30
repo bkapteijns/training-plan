@@ -53,7 +53,6 @@ app.post("/api/create-payment-intent", async (req, res) => {
     currency: "eur",
     payment_method_types: ["ideal"]
   });
-  console.log(paymentIntent);
   res.send({
     id: paymentIntent.id,
     clientSecret: paymentIntent.client_secret

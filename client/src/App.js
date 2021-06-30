@@ -49,19 +49,19 @@ export default function App() {
       (await axios
         .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
           query: `query reloginQuery($token: String!) {
-          relogin(token: $token) {
-            token
-            email
-            ownedEquipment
-            programs {
-              name
+            relogin(token: $token) {
               token
-              days
-              currentDay
-              equipment
+              email
+              ownedEquipment
+              programs {
+                name
+                token
+                days
+                currentDay
+                equipment
+              }
             }
-          }
-        }`,
+          }`,
           variables: {
             token: reloginToken
           }
@@ -81,10 +81,8 @@ export default function App() {
       .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
         query: `query getProgramsQuery {
           getPrograms {
-            name
-            token
-            days
-            currentDay
+            name,
+            days,
             equipment
           }
         }`
@@ -92,7 +90,6 @@ export default function App() {
       .then((res) => res.data.data.getPrograms)
       .then((data) => setPrograms(data))
       .catch((err) => console.log(err));
-    console.log(account, programs);
   };
 
   return (

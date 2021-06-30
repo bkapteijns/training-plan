@@ -7,28 +7,39 @@ import BodyweightProgram from "../programs/BodyweightProgram";
 export default function ProgramScreen({ account, programData }) {
   const params = useParams();
 
+  let own;
+
+  if (!account || !programData) return <div>Loading</div>;
+
   switch (params.programName) {
-    case "one":
-      return null;
-    case "two":
-      return null;
     case "bodyweight":
+      own =
+        account &&
+        account.programs &&
+        account.programs.filter((p) => p.name === "bodyweight");
       return (
         <BodyweightProgram
-          owned={
-            account &&
-            account.programs &&
-            account.programs.includes("bodyweight")
-          }
+          owned={own && own.length > 0}
           programData={
-            (account &&
-              account.programs &&
-              account.programs.includes("bodyweight")) ||
-            programData
+            own && own.length > 0
+              ? own[0]
+              : programData.filter((p) => p.name === "bodyweight")[0]
           }
         />
       );
     default:
-      return <BasicProgram />;
+      own =
+        account &&
+        account.programs &&
+        account.programs.filter((p) => p.name === "basic");
+      return (
+        <BasicProgram
+          programData={
+            own && own.length > 0
+              ? own[0]
+              : programData.filter((p) => p.name === "basic")[0]
+          }
+        />
+      );
   }
 }

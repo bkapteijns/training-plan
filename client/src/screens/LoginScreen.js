@@ -46,7 +46,6 @@ export default function LoginScreen({ setAccount, setReloginToken }) {
                 })
                 .then((res) => res.data.data.login)
                 .then((data) => {
-                  console.log(data);
                   setAccount(data);
                   setReloginToken(data.token);
                 })
