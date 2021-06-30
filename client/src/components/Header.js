@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
-export default function Header({ ownedPrograms, allPrograms, basket }) {
+export default function Header({
+  loggedIn,
+  logout,
+  ownedPrograms,
+  allPrograms,
+  basket
+}) {
   const [programsExpanded, setProgramsExpanded] = useState(false);
   const [basketExpanded, setBasketExpanded] = useState(false);
 
@@ -37,7 +43,12 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
                     history.push("/programs/basic");
                   }}
                 >
-                  {p.name}
+                  {p.name
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\w\S*/g, (w) =>
+                      w.replace(/^\w/, (c) => c.toUpperCase())
+                    )}
                 </NavDropdown.Item>
               ))}
             <NavDropdown.Divider />
@@ -53,19 +64,34 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
                   <NavDropdown.Item
                     onClick={() => history.push(`/programs/${p.name}`)}
                   >
-                    {p.name}
+                    {p.name
+                      .trim()
+                      .toLowerCase()
+                      .replace(/\w\S*/g, (w) =>
+                        w.replace(/^\w/, (c) => c.toUpperCase())
+                      )}
                   </NavDropdown.Item>
                 ))}
           </NavDropdown>
         </Nav>
         <Nav className="ml-auto">
-          <Button
-            variant="outline-light"
-            style={{ marginRight: 5 }}
-            onClick={() => history.push("/login")}
-          >
-            Login or register
-          </Button>
+          {loggedIn ? (
+            <Button
+              variant="outline-light"
+              style={{ marginRight: 5 }}
+              onClick={logout}
+            >
+              Log out
+            </Button>
+          ) : (
+            <Button
+              variant="outline-light"
+              style={{ marginRight: 5 }}
+              onClick={() => history.push("/login")}
+            >
+              Login or register
+            </Button>
+          )}
           {basket && basket.length > 0 && (
             <NavDropdown
               title={
@@ -77,7 +103,7 @@ export default function Header({ ownedPrograms, allPrograms, basket }) {
               onMouseEnter={() => setBasketExpanded(true)}
               onMouseLeave={() => setBasketExpanded(false)}
             >
-              <NavDropdown.Header>Programs:</NavDropdown.Header>
+              <NavDropdown.Header>Programs</NavDropdown.Header>
               {basket.map((i) => (
                 <NavDropdown.ItemText>
                   {i

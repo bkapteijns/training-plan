@@ -7,7 +7,7 @@ import {
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import axios from "axios";
 
-export default function IdealPaymentForm({ emailAddress }) {
+export default function IdealPaymentForm({ emailAddress, items }) {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
@@ -27,10 +27,13 @@ export default function IdealPaymentForm({ emailAddress }) {
     setProcessing(true);
 
     await axios
-      .post(`${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`, {
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: [] })
-      })
+      .post(
+        `${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`,
+        { items },
+        {
+          headers: { "Content-Type": "application/json" }
+        }
+      )
       .then((res) => res.data)
       .then(async (data) => {
         const payload = stripe.confirmIdealPayment(data.clientSecret, {

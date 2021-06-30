@@ -11,6 +11,7 @@ import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
+import LoginScreen from "./screens/LoginScreen";
 
 const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
@@ -97,6 +98,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Header
+        loggedIn={account && account.token}
+        logout={() => {
+          setAccount(null);
+          setReloginToken(null);
+        }}
         ownedPrograms={account ? account.programs : []}
         allPrograms={programs}
         basket={basket}
@@ -110,14 +116,23 @@ export default function App() {
           setReloginToken={setReloginToken}
         />
       </Route>
+      <Route path="/login">
+        <LoginScreen
+          setAccount={setAccount}
+          setReloginToken={setReloginToken}
+        />
+      </Route>
       <Route path="/programs" exact>
-        <ProgramsScreen />
+        <ProgramsScreen programData={programs} />
       </Route>
       <Route path="/programs/:programName">
-        <ProgramScreen account={account} />
+        <ProgramScreen account={account} programData={programs} />
       </Route>
       <Route path="/payment">
-        <PaymentScreen />
+        <PaymentScreen
+          emailAddress={account && account.email}
+          basket={basket}
+        />
       </Route>
       <Route path="/checkout">
         <div>Thanks for your purchase!</div>

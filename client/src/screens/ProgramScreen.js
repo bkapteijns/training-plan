@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import BasicProgram from "../programs/BasicProgram";
 import BodyweightProgram from "../programs/BodyweightProgram";
 
-export default function ProgramScreen({ account }) {
+export default function ProgramScreen({ account, programData }) {
   const params = useParams();
 
   switch (params.programName) {
@@ -19,6 +19,12 @@ export default function ProgramScreen({ account }) {
             account &&
             account.programs &&
             account.programs.includes("bodyweight")
+          }
+          programData={
+            (account &&
+              account.programs &&
+              account.programs.includes("bodyweight")) ||
+            programData
           }
         />
       );

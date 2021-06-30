@@ -8,10 +8,10 @@ const stripePromise = loadStripe(
   "pk_test_51J6XHhGSqSbA8PYS36LxxxqDlscsbWlLQTNgGUR1urkL4K2VkP20JmsRk8Mb0UN7A4MKdAvXiMQaCK0tRpR7L6qL007xNQ9eWm"
 );
 
-export default function PaymentScreen() {
+export default function PaymentScreen({ emailAddress, basket }) {
   return (
     <Elements stripe={stripePromise}>
-      <IdealPaymentForm />
+      <IdealPaymentForm emailAddress={emailAddress} items={basket} />
     </Elements>
   );
 }
