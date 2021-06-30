@@ -8,7 +8,7 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
   return (
     <div style={{ overflow: "hidden" }}>
       <Row>
-        <Col md={7}>
+        <Col style={{ width: "100%" }} md={7}>
           <Image src="/free-ebook.jpg" alt="Get your free ebook now!" fluid />
         </Col>
         <Col md={5}>

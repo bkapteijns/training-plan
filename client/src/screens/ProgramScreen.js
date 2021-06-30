@@ -1,45 +1,32 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import BasicProgram from "../programs/BasicProgram";
-import BodyweightProgram from "../programs/BodyweightProgram";
+import ProgramData from "../components/ProgramData";
 
 export default function ProgramScreen({ account, programData }) {
   const params = useParams();
 
-  let own;
-
-  if (!account || !programData) return <div>Loading</div>;
-
-  switch (params.programName) {
-    case "bodyweight":
-      own =
-        account &&
-        account.programs &&
-        account.programs.filter((p) => p.name === "bodyweight");
-      return (
-        <BodyweightProgram
-          owned={own && own.length > 0}
-          programData={
-            own && own.length > 0
-              ? own[0]
-              : programData.filter((p) => p.name === "bodyweight")[0]
-          }
-        />
-      );
-    default:
-      own =
-        account &&
-        account.programs &&
-        account.programs.filter((p) => p.name === "basic");
-      return (
-        <BasicProgram
-          programData={
-            own && own.length > 0
-              ? own[0]
-              : programData.filter((p) => p.name === "basic")[0]
-          }
-        />
-      );
-  }
+  if (
+    account &&
+    account.programs &&
+    account.programs.filter((p) => p.name === params.programName).length > 0
+  ) {
+    return (
+      <ProgramData
+        data={account.programs.filter((p) => p.name === params.programName)[0]}
+        ownedEquipment={account.ownedEquipment}
+        own
+      />
+    );
+  } else if (
+    programData &&
+    programData.filter((p) => p.name === params.programName).length > 0
+  ) {
+    return (
+      <ProgramData
+        data={programData.filter((p) => p.name === params.programName)[0]}
+        ownedEquipment={account ? account.ownedEquipment : []}
+      />
+    );
+  } else return <div>Program not found</div>;
 }

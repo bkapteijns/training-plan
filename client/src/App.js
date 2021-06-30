@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import axios from "axios";
@@ -43,12 +43,15 @@ export default function App() {
   const [reloginToken, setReloginToken] = useLocalStorage("reloginToken");
   const [basket, setBasket] = useSessionStorage("basket");
 
-  window.onload = async (e) => {
-    reloginToken &&
-      validator.isJWT(reloginToken) &&
-      (await axios
-        .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-          query: `query reloginQuery($token: String!) {
+  useEffect(
+    () =>
+      (async () => {
+        reloginToken &&
+          !account &&
+          validator.isJWT(reloginToken) &&
+          (await axios
+            .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+              query: `query reloginQuery($token: String!) {
             relogin(token: $token) {
               token
               email
@@ -59,38 +62,45 @@ export default function App() {
                 days
                 currentDay
                 equipment
+                description
+                price
               }
             }
           }`,
-          variables: {
-            token: reloginToken
-          }
-        })
-        .then((res) => res.data.data.relogin)
-        .then((data) => {
-          setAccount(data);
-          setReloginToken(data.token);
-        })
-        .catch((err) => {
-          setAccount(null);
-          setReloginToken(null);
-          console.log(err);
-        }));
+              variables: {
+                token: reloginToken
+              }
+            })
+            .then((res) => res.data.data.relogin)
+            .then((data) => {
+              setAccount(data);
+              setReloginToken(data.token);
+            })
+            .catch((err) => {
+              setAccount(null);
+              setReloginToken(null);
+              console.log(err);
+            }));
 
-    await axios
-      .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-        query: `query getProgramsQuery {
+        !programs &&
+          (await axios
+            .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+              query: `query getProgramsQuery {
           getPrograms {
-            name,
-            days,
+            name
+            days
             equipment
+            description
+            price
           }
         }`
-      })
-      .then((res) => res.data.data.getPrograms)
-      .then((data) => setPrograms(data))
-      .catch((err) => console.log(err));
-  };
+            })
+            .then((res) => res.data.data.getPrograms)
+            .then((data) => setPrograms(data))
+            .catch((err) => console.log(err)));
+      })(),
+    []
+  );
 
   return (
     <BrowserRouter>

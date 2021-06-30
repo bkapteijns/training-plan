@@ -15,12 +15,16 @@ module.exports = gql`
     days: Int!
     currentDay: Int!
     equipment: [String]
+    description: String!
+    price: Int!
   }
   type PublicProgram {
     _id: ID!
     name: String!
     days: Int!
     equipment: [String]
+    description: String!
+    price: Int!
   }
 
   input UserInput {
