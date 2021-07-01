@@ -20,12 +20,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  const allowedOrigins = [process.env.CLIENT_URI];
+  const allowedOrigins = [process.env.CLIENT_URI, "http://localhost:4000"];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_URI);
+  res.header("Access-Control-Allow-Origin", "http://localhost:4000");
   res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", true);
@@ -143,12 +144,13 @@ app.post("/api/send-purchase-confirmation-email", async (req, res) => {
   else res.sendStatus(400);
 });
 
+/*
 app.get("/program", (req, res) => {
-  const { program, day, programToken } = req.query;
+  const { program, day, token } = req.query;
   if (!program || !day) return res.status(400).send("Specify a program");
   // test whether the user has rights for the program
   if (
-    (verifyProgramToken(programToken, program) || program === "basic") &&
+    (verifyProgramToken(token, program) || program === "basic") &&
     !program.includes(".") &&
     !day.includes(".") && // we do not want the situation: program/../../index.js
     validator.isInt(day) // the day should be an integer
@@ -165,6 +167,14 @@ app.get("/program", (req, res) => {
   }
   return res.status(400).send("Program has not been purchased");
 });
+*/
+app.use(express.static(path.join(__dirname, "programs", "basic", "build")));
+app.get("/program*", (req, res) => {
+  if (req.params[0].startsWith("/basic"))
+    return res.sendFile(
+      path.join(__dirname, "programs", "basic", "build", "index.html")
+    );
+});
 
 /******************** GraphQL endpoint */
 const graphqlServer = new ApolloServer({ typeDefs, resolvers });
@@ -173,7 +183,8 @@ graphqlServer.applyMiddleware({ app, path: "/api/graphql" });
 mongoose
   .connect(process.env.DATABASE_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: true
   })
   .then(() => {
     console.log("Connected to database");

@@ -52,21 +52,21 @@ export default function App() {
           (await axios
             .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
               query: `query reloginQuery($token: String!) {
-            relogin(token: $token) {
-              token
-              email
-              ownedEquipment
-              programs {
-                name
-                token
-                days
-                currentDay
-                equipment
-                description
-                price
-              }
-            }
-          }`,
+                relogin(token: $token) {
+                  token
+                  email
+                  ownedEquipment
+                  programs {
+                    name
+                    token
+                    days
+                    currentDay
+                    equipment
+                    description
+                    price
+                  }
+                }
+              }`,
               variables: {
                 token: reloginToken
               }

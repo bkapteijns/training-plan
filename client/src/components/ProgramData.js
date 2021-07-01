@@ -8,41 +8,50 @@ export default function ProgramData({ data, ownedEquipment, own }) {
         <Col>
           <h1>
             {data.name
+              .trim()
               .toLowerCase()
               .replace(/\w\S*/g, (w) =>
                 w.replace(/^\w/, (c) => c.toUpperCase())
-              )}
+              )}{" "}
+            program
           </h1>
         </Col>
       </Row>
       <Row>
-        <Col md={10}>
+        <Col md={9}>
           <Row style={{ justifyContent: "center" }}>
             <Col md={10}>
               <div>{data.description}</div>
             </Col>
           </Row>
           <h2>Equipment</h2>
-          <ListGroup>
-            {data.equipment.length === 0 ? (
-              <ListGroup.Item>
-                No equipment needed for this program!
-              </ListGroup.Item>
-            ) : (
-              data.equipment.map((e) => (
-                <ListGroup.Item
-                  key={e}
-                  variant={ownedEquipment.includes(e) ? "success" : "danger"}
-                >
-                  {e
-                    .toLowerCase()
-                    .replace(/\w\S*/g, (w) =>
-                      w.replace(/^\w/, (c) => c.toUpperCase())
-                    )}
-                </ListGroup.Item>
-              ))
-            )}
-          </ListGroup>
+          <Row style={{ justifyContent: "center" }}>
+            <Col md={10}>
+              <ListGroup>
+                {data.equipment.length === 0 ? (
+                  <ListGroup.Item>
+                    No equipment needed for this program!
+                  </ListGroup.Item>
+                ) : (
+                  data.equipment.map((e) => (
+                    <ListGroup.Item
+                      key={e}
+                      variant={
+                        ownedEquipment.includes(e) ? "success" : "danger"
+                      }
+                    >
+                      {e
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\w\S*/g, (w) =>
+                          w.replace(/^\w/, (c) => c.toUpperCase())
+                        )}
+                    </ListGroup.Item>
+                  ))
+                )}
+              </ListGroup>
+            </Col>
+          </Row>
           {!own && (
             <>
               <h2>Purchase</h2>
@@ -55,18 +64,27 @@ export default function ProgramData({ data, ownedEquipment, own }) {
             </>
           )}
         </Col>
-        <Col md={2}>
+        <Col md={3}>
           <ListGroup>
             {[...Array(data.days).keys()].map((n) => (
               <ListGroup.Item
+                style={{ cursor: "pointer" }}
                 variant={
-                  own && n < data.currentDay
+                  own && n + 1 < data.currentDay
                     ? "success"
-                    : own && n === data.currentDay
+                    : own && n + 1 === data.currentDay
                     ? "warning"
                     : ""
                 }
                 key={n}
+                onClick={() =>
+                  own &&
+                  window.open(
+                    `${process.env.REACT_APP_SERVER_URI}program/${data.name}/${
+                      n + 1
+                    }?token=${data.token}`
+                  )
+                }
               >
                 Day {(n + 1).toString()}
               </ListGroup.Item>

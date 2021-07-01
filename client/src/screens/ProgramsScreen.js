@@ -15,6 +15,7 @@ export default function ProgramsScreen({ programData }) {
                 <Card.Header>
                   <Card.Title style={{ marginLeft: 20 }}>
                     {p.name
+                      .trim()
                       .toLowerCase()
                       .replace(/\w\S*/g, (w) =>
                         w.replace(/^\w/, (c) => c.toUpperCase())
@@ -29,6 +30,7 @@ export default function ProgramsScreen({ programData }) {
                       p.equipment.map((e) => (
                         <ListGroup.Item>
                           {e
+                            .trim()
                             .toLowerCase()
                             .replace(/\w\S*/g, (w) =>
                               w.replace(/^\w/, (c) => c.toUpperCase())
