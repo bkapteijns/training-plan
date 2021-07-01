@@ -23,7 +23,10 @@ export default function ProgramsScreen({ programData }) {
                   </Card.Title>
                 </Card.Header>
                 <Card.Body>
-                  <Card.Text>{p.description.substr(0, 200)}...</Card.Text>
+                  <Card.Text>
+                    {p.description.substr(0, 200)}
+                    {p.description.length > 200 && "..."}
+                  </Card.Text>
                   <Card.Subtitle>Equipment</Card.Subtitle>
                   <ListGroup horizontal style={{ overflowX: "auto" }}>
                     {p.equipment.length > 0 ? (

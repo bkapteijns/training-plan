@@ -50,7 +50,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
   const { items } = req.body;
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
+    amount: await calculateOrderAmount(items),
     currency: "eur",
     payment_method_types: ["ideal"]
   });
@@ -144,30 +144,6 @@ app.post("/api/send-purchase-confirmation-email", async (req, res) => {
   else res.sendStatus(400);
 });
 
-/*
-app.get("/program", (req, res) => {
-  const { program, day, token } = req.query;
-  if (!program || !day) return res.status(400).send("Specify a program");
-  // test whether the user has rights for the program
-  if (
-    (verifyProgramToken(token, program) || program === "basic") &&
-    !program.includes(".") &&
-    !day.includes(".") && // we do not want the situation: program/../../index.js
-    validator.isInt(day) // the day should be an integer
-  ) {
-    return fs.access(
-      path.join(__dirname, "programs", program, `${day}.html`),
-      (err) => {
-        if (err) return res.status(400).send("Program not available");
-        return res.sendFile(
-          path.join(__dirname, "programs", program, `${day}.html`)
-        );
-      }
-    );
-  }
-  return res.status(400).send("Program has not been purchased");
-});
-*/
 app.use(express.static(path.join(__dirname, "programs", "basic", "build")));
 app.get("/program*", (req, res) => {
   if (req.params[0].startsWith("/basic"))

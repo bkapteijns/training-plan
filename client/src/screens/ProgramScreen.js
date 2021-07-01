@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import ProgramData from "../components/ProgramData";
 
-export default function ProgramScreen({ account, programData }) {
+export default function ProgramScreen({ account, programData, addToBasket }) {
   const params = useParams();
 
   if (
@@ -26,6 +26,7 @@ export default function ProgramScreen({ account, programData }) {
       <ProgramData
         data={programData.filter((p) => p.name === params.programName)[0]}
         ownedEquipment={account ? account.ownedEquipment : []}
+        addToBasket={addToBasket}
       />
     );
   } else return <div>Program not found</div>;

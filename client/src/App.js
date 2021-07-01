@@ -12,6 +12,7 @@ import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
 import LoginScreen from "./screens/LoginScreen";
+import BasketScreen from "./screens/BasketScreen";
 
 const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
@@ -31,7 +32,7 @@ const useSessionStorage = (item) => {
       : []
   );
   const setState = (newState) => {
-    window.sessionStorage.setItem(newState.toString());
+    window.sessionStorage.setItem(item, newState.toString());
     rawSetState(newState);
   };
   return [state, setState];
@@ -133,7 +134,18 @@ export default function App() {
         <ProgramsScreen programData={programs} />
       </Route>
       <Route path="/programs/:programName">
-        <ProgramScreen account={account} programData={programs} />
+        <ProgramScreen
+          account={account}
+          programData={programs}
+          addToBasket={(item) => setBasket([...basket, item])}
+        />
+      </Route>
+      <Route path="/basket">
+        <BasketScreen
+          basket={basket}
+          setBasket={setBasket}
+          programData={programs}
+        />
       </Route>
       <Route path="/payment">
         <PaymentScreen

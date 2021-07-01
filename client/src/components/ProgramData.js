@@ -1,7 +1,12 @@
 import React from "react";
 import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
 
-export default function ProgramData({ data, ownedEquipment, own }) {
+export default function ProgramData({
+  data,
+  ownedEquipment,
+  own,
+  addToBasket
+}) {
   return (
     <Container>
       <Row>
@@ -55,7 +60,7 @@ export default function ProgramData({ data, ownedEquipment, own }) {
           {!own && (
             <>
               <h2>Purchase</h2>
-              <Button>
+              <Button onClick={() => addToBasket(data.name)}>
                 Buy the program -{" "}
                 {data.price === 0
                   ? "FREE"

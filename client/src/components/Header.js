@@ -107,14 +107,17 @@ export default function Header({
             >
               <NavDropdown.Header>Programs</NavDropdown.Header>
               {basket.map((i) => (
-                <NavDropdown.ItemText key={i}>
+                <NavDropdown.Item
+                  key={i}
+                  onClick={() => history.push(`/programs/${i}`)}
+                >
                   {i
                     .trim()
                     .toLowerCase()
                     .replace(/\w\S*/g, (w) =>
                       w.replace(/^\w/, (c) => c.toUpperCase())
                     )}
-                </NavDropdown.ItemText>
+                </NavDropdown.Item>
               ))}
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={() => history.push("/payment")}>

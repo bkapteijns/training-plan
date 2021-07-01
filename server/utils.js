@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 
+const Program = require("./ProgramSchema");
+
 module.exports = {
   createProgramToken: (program, user) => {
     return jwt.sign({ program, user }, process.env.SECRET_KEY, {
@@ -35,10 +37,8 @@ module.exports = {
       return null;
     }
   },
-  calculateOrderAmount: (items) => {
-    // Replace this constant with a calculation of the order's amount
-    // Calculate the order total on the server to prevent
-    // people from directly manipulating the amount on the client
-    return 1000;
-  }
+  calculateOrderAmount: async (items) =>
+    (await Program.find({ name: items }))
+      .map((p) => p._doc.price)
+      .reduce((a, b) => a + b)
 };
