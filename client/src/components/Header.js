@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
@@ -7,12 +7,14 @@ export default function Header({
   logout,
   ownedPrograms,
   allPrograms,
-  basket
+  basket,
+  setMoveToast
 }) {
   const [programsExpanded, setProgramsExpanded] = useState(false);
   const [basketExpanded, setBasketExpanded] = useState(false);
-
   const history = useHistory();
+
+  useEffect(() => setMoveToast(basketExpanded), [basketExpanded, setMoveToast]);
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg">

@@ -44,6 +44,7 @@ export default function App() {
   const [account, setAccount] = useState();
   const [programs, setPrograms] = useState();
   const [errorToast, setErrorToast] = useState();
+  const [moveToast, setMoveToast] = useState();
   const [reloginToken, setReloginToken] = useLocalStorage("reloginToken");
   const [basket, setBasket] = useSessionStorage("basket");
 
@@ -123,11 +124,13 @@ export default function App() {
         ownedPrograms={account ? account.programs : []}
         allPrograms={programs}
         basket={basket}
+        setMoveToast={setMoveToast}
       />
       {errorToast && (
         <ErrorToaster
           message={errorToast}
           onClose={() => setErrorToast(null)}
+          move={moveToast}
         />
       )}
       <Route path="/" exact>
@@ -223,6 +226,7 @@ export default function App() {
         <PaymentScreen
           emailAddress={account && account.email}
           basket={basket}
+          setErrorToast={setErrorToast}
         />
       </Route>
       <Route path="/checkout">
