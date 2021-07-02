@@ -13,6 +13,7 @@ import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
 import LoginScreen from "./screens/LoginScreen";
 import BasketScreen from "./screens/BasketScreen";
+import EquipmentScreen from "./screens/EquipmentScreen";
 
 const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
@@ -138,6 +139,57 @@ export default function App() {
           account={account}
           programData={programs}
           addToBasket={(item) => setBasket([...basket, item])}
+        />
+      </Route>
+      <Route path="/equipment">
+        <EquipmentScreen
+          owned={account && account.ownedEquipment}
+          setOwned={async (e) => {
+            setAccount((a) => ({
+              ...a,
+              ownedEquipment:
+                a && a.ownedEquipment.includes(e)
+                  ? a && a.ownedEquipment.filter((i) => i !== e)
+                  : [...a.ownedEquipment, e]
+            }));
+            if (account && account.ownedEquipment.includes(e))
+              return axios
+                .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+                  query: `mutation removeEquipmentMutation($token: String!, $equipment: String!) {
+                    removeEquipment (token: $token, equipment: $equipment) {
+                      ownedEquipment
+                    }
+                  }`,
+                  variables: {
+                    token: account.token,
+                    equipment: e
+                  }
+                })
+                .then((r) =>
+                  setAccount((a) => ({
+                    ...a,
+                    ownedEquipment: r.data.data.removeEquipment.ownedEquipment
+                  }))
+                );
+            return axios
+              .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
+                query: `mutation addEquipmentMutation($token: String!, $equipment: String!) {
+                  addEquipment (token: $token, equipment: $equipment) {
+                    ownedEquipment
+                  }
+                }`,
+                variables: {
+                  token: account.token,
+                  equipment: e
+                }
+              })
+              .then((r) =>
+                setAccount((a) => ({
+                  ...a,
+                  ownedEquipment: r.data.data.addEquipment.ownedEquipment
+                }))
+              );
+          }}
         />
       </Route>
       <Route path="/basket">

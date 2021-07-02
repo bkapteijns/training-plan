@@ -26,6 +26,11 @@ export default function Header({
           <Nav.Link onClick={() => history.push("/landing")}>
             Free ebook
           </Nav.Link>
+          {loggedIn && (
+            <Nav.Link onClick={() => history.push("/equipment")}>
+              Equipment
+            </Nav.Link>
+          )}
           <NavDropdown
             title={
               <span onClick={() => history.push("/programs")}>Programs</span>

@@ -41,9 +41,12 @@ module.exports = gql`
     relogin(token: String!): User!
     getPrograms: [PublicProgram]
     getProgram(program: String!, token: String!, day: Int!): ProgramDay!
+    getEquipment: [String]
   }
   type Mutation {
     login(userInput: UserInput): User!
     finishProgram(program: String!, token: String, day: Int!): ProgramDay!
+    addEquipment(token: String!, equipment: String!): User!
+    removeEquipment(token: String!, equipment: String!): User!
   }
 `;

@@ -6,6 +6,7 @@ require("dotenv").config();
 const User = require("../UserSchema");
 const Program = require("../ProgramSchema");
 const { createUserToken, verifyUserToken } = require("../utils");
+
 const userResolvers = {
   Query: {
     relogin: async (parent, { token }, context, info) => {
@@ -46,6 +47,32 @@ const userResolvers = {
       });
       await user.save();
       return user._doc;
+    },
+    addEquipment: async (parent, { token, equipment }) => {
+      try {
+        const { _id } = verifyUserToken(token);
+        const user = await User.findOneAndUpdate(
+          { _id },
+          { $push: { ownedEquipment: equipment } },
+          { new: true }
+        );
+        return user._doc;
+      } catch (e) {
+        return new UserInputError("Token must be a valid JWT");
+      }
+    },
+    removeEquipment: async (parent, { token, equipment }) => {
+      try {
+        const { _id } = verifyUserToken(token);
+        const user = await User.findOneAndUpdate(
+          { _id },
+          { $pull: { ownedEquipment: equipment } },
+          { new: true }
+        );
+        return user._doc;
+      } catch (e) {
+        return new UserInputError("Token must be a valid JWT");
+      }
     }
   },
   User: {

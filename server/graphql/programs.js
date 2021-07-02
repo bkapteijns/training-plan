@@ -29,7 +29,17 @@ const programResolvers = {
         console.log(e);
         return { name: "basic", finished: false };
       }
-    }
+    },
+    getEquipment: async () => [
+      "dumbbells",
+      "resistance band",
+      "pullup bar",
+      "barbell",
+      "yoga mat",
+      "bench",
+      "squat rack",
+      "cable machine"
+    ]
   },
 
   Mutation: {

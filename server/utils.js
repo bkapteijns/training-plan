@@ -34,6 +34,7 @@ module.exports = {
         _id: jwt.verify(token, process.env.SECRET_KEY).sub
       };
     } catch (e) {
+      console.log(e);
       return null;
     }
   },
