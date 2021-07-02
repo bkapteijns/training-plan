@@ -42,7 +42,7 @@ export default function Header({
             onMouseEnter={() => setProgramsExpanded(true)}
             onMouseLeave={() => setProgramsExpanded(false)}
           >
-            <NavDropdown.Header>Your programs</NavDropdown.Header>
+            {loggedIn && <NavDropdown.Header>Your programs</NavDropdown.Header>}
             {ownedPrograms &&
               ownedPrograms.map((p) => (
                 <NavDropdown.Item
@@ -59,8 +59,10 @@ export default function Header({
                     )}
                 </NavDropdown.Item>
               ))}
-            <NavDropdown.Divider />
-            <NavDropdown.Header>Other programs</NavDropdown.Header>
+            {loggedIn && <NavDropdown.Divider />}
+            {loggedIn && (
+              <NavDropdown.Header>Other programs</NavDropdown.Header>
+            )}
             {allPrograms &&
               allPrograms
                 .filter(

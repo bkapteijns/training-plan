@@ -9,7 +9,7 @@ export default function BasketScreen({ basket, setBasket, programData }) {
     <Container>
       <Row>
         <Col>
-          {programData &&
+          {programData && basket && basket.length > 0 ? (
             programData
               .filter((p) => basket.includes(p.name))
               .map((p) => (
@@ -55,7 +55,18 @@ export default function BasketScreen({ basket, setBasket, programData }) {
                     </Row>
                   </Card.Footer>
                 </Card>
-              ))}
+              ))
+          ) : (
+            <div>
+              You do not have anything in your basket.{" "}
+              <span
+                style={{ cursor: "pointer", color: "blue" }}
+                onClick={() => history.push("/programs")}
+              >
+                Buy a program!
+              </span>
+            </div>
+          )}
           <Row>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
