@@ -132,7 +132,10 @@ export default function App() {
         />
       </Route>
       <Route path="/programs" exact>
-        <ProgramsScreen programData={programs} />
+        <ProgramsScreen
+          programData={programs}
+          loggedIn={account && account.token}
+        />
       </Route>
       <Route path="/programs/:programName">
         <ProgramScreen

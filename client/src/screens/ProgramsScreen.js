@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Container, Row, Col, Card, ListGroup } from "react-bootstrap";
 
-export default function ProgramsScreen({ programData }) {
+export default function ProgramsScreen({ programData, loggedIn }) {
   const history = useHistory();
 
   return (
@@ -31,7 +31,10 @@ export default function ProgramsScreen({ programData }) {
                   <ListGroup horizontal style={{ overflowX: "auto" }}>
                     {p.equipment.length > 0 ? (
                       p.equipment.map((e) => (
-                        <ListGroup.Item>
+                        <ListGroup.Item
+                          style={loggedIn && { cursor: "pointer" }}
+                          onClick={() => loggedIn && history.push("/equipment")}
+                        >
                           {e
                             .trim()
                             .toLowerCase()

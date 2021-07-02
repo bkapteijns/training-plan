@@ -1,12 +1,16 @@
 import React from "react";
 import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
 export default function ProgramData({
   data,
   ownedEquipment,
   own,
-  addToBasket
+  addToBasket,
+  loggedIn
 }) {
+  const history = useHistory();
+
   return (
     <Container>
       <Row>
@@ -44,6 +48,8 @@ export default function ProgramData({
                       variant={
                         ownedEquipment.includes(e) ? "success" : "danger"
                       }
+                      style={loggedIn && { cursor: "pointer" }}
+                      onClick={() => loggedIn && history.push("/equipment")}
                     >
                       {e
                         .trim()

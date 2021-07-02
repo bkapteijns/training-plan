@@ -16,6 +16,7 @@ export default function ProgramScreen({ account, programData, addToBasket }) {
         data={account.programs.filter((p) => p.name === params.programName)[0]}
         ownedEquipment={account.ownedEquipment}
         own
+        loggedIn={account.token}
       />
     );
   } else if (
@@ -27,6 +28,7 @@ export default function ProgramScreen({ account, programData, addToBasket }) {
         data={programData.filter((p) => p.name === params.programName)[0]}
         ownedEquipment={account ? account.ownedEquipment : []}
         addToBasket={addToBasket}
+        loggedIn={account && account.token}
       />
     );
   } else return <div>Program not found</div>;
