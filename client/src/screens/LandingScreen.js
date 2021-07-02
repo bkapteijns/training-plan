@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Image } from "react-bootstrap";
 import { Formik } from "formik";
 import axios from "axios";
 import validator from "validator";
 
 export default function LandingScreen({ setAccount, setReloginToken }) {
+  const [serverErrors, setServerErrors] = useState();
+  const [oldEmail, setOldEmail] = useState();
+  const [oldPassword, setOldPassword] = useState();
+
   return (
     <div style={{ overflow: "hidden" }}>
       <Row>
@@ -24,10 +28,25 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                     if (values.password.length < 8)
                       errors.password =
                         "Password must be at least 8 characters";
+                    if (
+                      serverErrors === "Invalid credentials" &&
+                      values.email === oldEmail
+                    )
+                      errors.email = "Email already in use";
+                    if (
+                      serverErrors === "Invalid credentials" &&
+                      values.password === oldPassword
+                    )
+                      errors.password = "Wrong password";
                     return errors;
                   }}
-                  onSubmit={async (values, { setSubmitting, resetForm }) => {
+                  onSubmit={async (
+                    values,
+                    { setSubmitting, resetForm, validateForm }
+                  ) => {
                     setSubmitting(true);
+                    setOldEmail(values.email);
+                    setOldPassword(values.password);
                     await axios
                       .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
                         query: `mutation loginMutation($userInput: UserInput!) {
@@ -48,12 +67,16 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                           userInput: values
                         }
                       })
-                      .then((res) => res.data.data.login)
+                      .then((res) => {
+                        if (res.data.errors)
+                          throw new Error(res.data.errors[0].message);
+                        return res.data.data.login;
+                      })
                       .then((data) => {
                         setAccount(data);
                         setReloginToken(data.token);
                       })
-                      .then(() =>
+                      .then(() => {
                         axios
                           .post(
                             `${process.env.REACT_APP_SERVER_URI}api/send-introduction-email`,
@@ -61,11 +84,14 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                               emailAddress: values.email
                             }
                           )
-                          .catch((e) => console.error(e))
-                      )
-                      .catch((err) => console.error(err));
+                          .catch((e) => console.error(e));
+                        resetForm();
+                      })
+                      .catch((err) => {
+                        setServerErrors(err.message);
+                        validateForm();
+                      });
                     setSubmitting(false);
-                    resetForm();
                   }}
                 >
                   {({

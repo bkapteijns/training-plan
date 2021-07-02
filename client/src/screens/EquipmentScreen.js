@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, ListGroup, Button } from "react-bootstrap";
 import axios from "axios";
 
-export default function EquipmentScreen({ owned, setOwned }) {
+export default function EquipmentScreen({ owned, setOwned, setErrorToast }) {
   const [allEquipment, setAllEquipment] = useState();
 
   useEffect(
@@ -15,7 +15,10 @@ export default function EquipmentScreen({ owned, setOwned }) {
               getEquipment
             }`
             })
-            .then((r) => r.data.data.getEquipment)
+            .then((r) => {
+              if (r.data.errors) setErrorToast(r.data.errors[0].message);
+              return r.data.data.getEquipment;
+            })
         ))(),
     []
   );

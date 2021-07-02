@@ -7,6 +7,7 @@ import validator from "validator";
 // import purify from "dompurify"; This is used for adding things to the dom
 
 import Header from "./components/Header";
+import ErrorToaster from "./components/ErrorToaster";
 import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
@@ -42,6 +43,7 @@ const useSessionStorage = (item) => {
 export default function App() {
   const [account, setAccount] = useState();
   const [programs, setPrograms] = useState();
+  const [errorToast, setErrorToast] = useState();
   const [reloginToken, setReloginToken] = useLocalStorage("reloginToken");
   const [basket, setBasket] = useSessionStorage("basket");
 
@@ -73,7 +75,10 @@ export default function App() {
                 token: reloginToken
               }
             })
-            .then((res) => res.data.data.relogin)
+            .then((res) => {
+              if (res.data.errors) setErrorToast(res.data.errors[0].message);
+              return res.data.data.relogin;
+            })
             .then((data) => {
               setAccount(data);
               setReloginToken(data.token);
@@ -88,16 +93,19 @@ export default function App() {
           (await axios
             .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
               query: `query getProgramsQuery {
-          getPrograms {
-            name
-            days
-            equipment
-            description
-            price
-          }
-        }`
+                getPrograms {
+                  name
+                  days
+                  equipment
+                  description
+                  price
+                }
+              }`
             })
-            .then((res) => res.data.data.getPrograms)
+            .then((res) => {
+              if (res.data.errors) setErrorToast(res.data.errors[0].message);
+              return res.data.data.getPrograms;
+            })
             .then((data) => setPrograms(data))
             .catch((err) => console.log(err)));
       })(),
@@ -116,6 +124,12 @@ export default function App() {
         allPrograms={programs}
         basket={basket}
       />
+      {errorToast && (
+        <ErrorToaster
+          message={errorToast}
+          onClose={() => setErrorToast(null)}
+        />
+      )}
       <Route path="/" exact>
         <Link to="/programs">Look at the different programs</Link>
       </Route>
@@ -146,6 +160,7 @@ export default function App() {
       </Route>
       <Route path="/equipment">
         <EquipmentScreen
+          setErrorToast={setErrorToast}
           owned={account && account.ownedEquipment}
           setOwned={async (e) => {
             setAccount((a) => ({
@@ -168,12 +183,13 @@ export default function App() {
                     equipment: e
                   }
                 })
-                .then((r) =>
+                .then((r) => {
+                  if (r.data.errors) setErrorToast(r.data.errors[0].message);
                   setAccount((a) => ({
                     ...a,
                     ownedEquipment: r.data.data.removeEquipment.ownedEquipment
-                  }))
-                );
+                  }));
+                });
             return axios
               .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
                 query: `mutation addEquipmentMutation($token: String!, $equipment: String!) {
@@ -186,12 +202,13 @@ export default function App() {
                   equipment: e
                 }
               })
-              .then((r) =>
+              .then((r) => {
+                if (r.data.errors) setErrorToast(r.data.errors[0].message);
                 setAccount((a) => ({
                   ...a,
                   ownedEquipment: r.data.data.addEquipment.ownedEquipment
-                }))
-              );
+                }));
+              });
           }}
         />
       </Route>

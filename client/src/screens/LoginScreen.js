@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import { Form, Container, Row, Col, Button } from "react-bootstrap";
 import validator from "validator";
@@ -6,6 +6,10 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 
 export default function LoginScreen({ setAccount, setReloginToken }) {
+  const [serverErrors, setServerErrors] = useState();
+  const [oldEmail, setOldEmail] = useState();
+  const [oldPassword, setOldPassword] = useState();
+
   const history = useHistory();
 
   return (
@@ -20,10 +24,25 @@ export default function LoginScreen({ setAccount, setReloginToken }) {
                 errors.email = "Provide a valid email address";
               if (values.password.length < 8)
                 errors.password = "Password must be at least 8 characters";
+              if (
+                serverErrors === "Invalid credentials" &&
+                values.email === oldEmail
+              )
+                errors.email = "Email already in use";
+              if (
+                serverErrors === "Invalid credentials" &&
+                values.password === oldPassword
+              )
+                errors.password = "Wrong password";
               return errors;
             }}
-            onSubmit={async (values, { setSubmitting, resetForm }) => {
+            onSubmit={async (
+              values,
+              { setSubmitting, resetForm, validateForm }
+            ) => {
               setSubmitting(true);
+              setOldEmail(values.email);
+              setOldPassword(values.password);
               await axios
                 .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
                   query: `mutation loginMutation($userInput: UserInput!) {
@@ -44,15 +63,22 @@ export default function LoginScreen({ setAccount, setReloginToken }) {
                     userInput: values
                   }
                 })
-                .then((res) => res.data.data.login)
+                .then((res) => {
+                  if (res.data.errors)
+                    throw new Error(res.data.errors[0].message);
+                  return res.data.data.login;
+                })
                 .then((data) => {
                   setAccount(data);
                   setReloginToken(data.token);
+                  resetForm();
                 })
                 .then(() => history.push("/"))
-                .catch((err) => console.error(err));
+                .catch((err) => {
+                  setServerErrors(err.message);
+                  validateForm();
+                });
               setSubmitting(false);
-              resetForm();
             }}
           >
             {({
@@ -83,7 +109,7 @@ export default function LoginScreen({ setAccount, setReloginToken }) {
                       {errors.email}
                     </Form.Control.Feedback>
                     <Form.Control.Feedback type="valid">
-                      Ebook will be sent to {values.email}
+                      Welcome {values.email.split("@")[0]}
                     </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
