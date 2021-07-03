@@ -180,7 +180,10 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                       errors.email = "Provide a valid email address";
                     return errors;
                   }}
-                  onSumbit={async (values, { setSubmitting, validateForm }) => {
+                  onSubmit={async (
+                    values,
+                    { setSubmitting, validateForm, resetForm }
+                  ) => {
                     setSubmitting(true);
                     await axios
                       .post(
@@ -189,6 +192,7 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                           emailAddress: values.email
                         }
                       )
+                      .then(resetForm)
                       .catch((e) => console.error(e));
                     setSubmitting(false);
                     validateForm();
