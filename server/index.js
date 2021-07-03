@@ -20,16 +20,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  const allowedOrigins = [process.env.CLIENT_URI, "http://localhost:4000"];
+  const allowedOrigins = [process.env.CLIENT_URI];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URI);
-  res.header("Access-Control-Allow-Origin", "http://localhost:4000");
-  res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET, OPTIONS, POST");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", true);
+  console.log(res);
   return next();
 });
 
@@ -61,6 +60,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
 });
 app.post("/api/cancel-payment-intent", async (req, res) => {
   const { id } = req.body;
+  console.log(id);
   if (id.startsWith("pi_")) console.log(await stripe.paymentIntents.cancel(id));
   res.status(204).send();
 });
@@ -90,6 +90,7 @@ app.post(
 );
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
+  console.log(emailAddress);
   // send mail with defined transport object
   if (emailAddress && validator.isEmail(emailAddress)) {
     if ((await Email.find({ address: emailAddress })).length === 0) {
