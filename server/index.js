@@ -23,12 +23,11 @@ app.use((req, res, next) => {
   const allowedOrigins = [process.env.CLIENT_URI];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Origin", origin);
   }
   res.header("Access-Control-Allow-Methods", "GET, OPTIONS, POST");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", true);
-  console.log(res);
   return next();
 });
 
@@ -61,7 +60,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
 app.post("/api/cancel-payment-intent", async (req, res) => {
   const { id } = req.body;
   console.log(id);
-  if (id.startsWith("pi_")) console.log(await stripe.paymentIntents.cancel(id));
+  if (id.startsWith("pi_")) await stripe.paymentIntents.cancel(id);
   res.status(204).send();
 });
 app.post(
@@ -73,13 +72,13 @@ app.post(
     const { type, data } = req.body;
     switch (type) {
       case "payment_intent.succeeded":
-        console.log(type, JSON.stringify(data));
+        console.log(type, data);
         break;
       case "payment_intent.cancelled":
-        console.log(type, JSON.stringify(data));
+        console.log(type, data);
         break;
       case "payment_intent.payment_failed":
-        console.log(type, JSON.stringify(data));
+        console.log(type, data);
         break;
       default:
         console.log(`No webhook defined for ${type}`);
@@ -90,7 +89,6 @@ app.post(
 );
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
-  console.log(emailAddress);
   // send mail with defined transport object
   if (emailAddress && validator.isEmail(emailAddress)) {
     if ((await Email.find({ address: emailAddress })).length === 0) {
