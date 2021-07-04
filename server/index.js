@@ -1,22 +1,28 @@
+require("dotenv").config();
 const express = require("express");
-const stripe = require("stripe")(
-  "sk_test_51J6XHhGSqSbA8PYSRo15Mh32OmaTfz2bZu7SoQrdZ8sY6pSjbguVXqQLWFeQdwFfMGO7vlYclfNrvKp5bK852lsp00TeJTTvLE"
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
 const { ApolloServer } = require("apollo-server-express");
 const validator = require("validator");
 
 const { typeDefs, resolvers } = require("./graphql/index");
 const { calculateOrderAmount, verifyProgramToken } = require("./utils");
 const Email = require("./EmailSchema");
+const stripeWebhooks = require("./routes/stripe-webhooks/index");
+const stripeWebhookMiddleware = require("./middleware/stripeWebhook");
 
 const app = express();
 
 /********** Middleware */
+app.use(
+  "/api/stripe-webhooks",
+  express.raw({ type: "*/*" }),
+  stripeWebhookMiddleware,
+  stripeWebhooks
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
@@ -45,12 +51,14 @@ const transporter = nodemailer.createTransport({
 
 /**************** REST endpoint */
 app.post("/api/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+  const { items, emailAddress } = req.body;
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: await calculateOrderAmount(items),
     currency: "eur",
-    payment_method_types: ["ideal"]
+    payment_method_types: ["ideal"],
+    description: items.toString(),
+    receipt_email: emailAddress
   });
   res.send({
     id: paymentIntent.id,
@@ -63,30 +71,6 @@ app.post("/api/cancel-payment-intent", async (req, res) => {
   if (id.startsWith("pi_")) await stripe.paymentIntents.cancel(id);
   res.status(204).send();
 });
-app.post(
-  "/api/stripe-webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    // MAKE SURE WHETHER THE REQUEST CAME FROM STRIPE
-    console.log(req.body);
-    const { type, data } = req.body;
-    switch (type) {
-      case "payment_intent.succeeded":
-        console.log(type, data);
-        break;
-      case "payment_intent.cancelled":
-        console.log(type, data);
-        break;
-      case "payment_intent.payment_failed":
-        console.log(type, data);
-        break;
-      default:
-        console.log(`No webhook defined for ${type}`);
-        break;
-    }
-    res.send({ received: true });
-  }
-);
 app.post("/api/send-introduction-email", async (req, res) => {
   const { emailAddress } = req.body;
   // send mail with defined transport object

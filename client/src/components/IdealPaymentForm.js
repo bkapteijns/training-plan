@@ -29,7 +29,7 @@ export default function IdealPaymentForm({ emailAddress, items }) {
     await axios
       .post(
         `${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`,
-        { items },
+        { items, emailAddress },
         {
           headers: { "Content-Type": "application/json" }
         }
@@ -45,12 +45,7 @@ export default function IdealPaymentForm({ emailAddress, items }) {
           return setProcessing(false);
         }
       })
-      .then(() =>
-        axios.post(
-          `${process.env.REACT_APP_SERVER_URI}api/send-purchase-confirmation-email`,
-          { emailAddress }
-        )
-      );
+      .catch((e) => console.log(e));
     setError(null);
     setSucceeded(true);
     return setProcessing(false);
