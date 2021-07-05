@@ -18,7 +18,8 @@ import {
   removeEquipment,
   addEquipment,
   relogin,
-  getPrograms
+  getPrograms,
+  logout
 } from "./functions";
 
 const useLocalStorage = (item) => {
@@ -76,10 +77,7 @@ export default function App() {
     <BrowserRouter>
       <Header
         loggedIn={account && account.token}
-        logout={() => {
-          setAccount(null);
-          setReloginToken(null);
-        }}
+        logout={() => logout(setAccount, setReloginToken)}
         ownedPrograms={account ? account.programs : []}
         allPrograms={programs}
         basket={basket}

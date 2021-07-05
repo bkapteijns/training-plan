@@ -12,7 +12,7 @@ const login = async (email, password, setAccount, setReloginToken) => {
             name
             token
             days
-            currentDay
+            finishedDays
             description
             equipment
             price

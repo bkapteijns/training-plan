@@ -19,10 +19,9 @@ const programResolvers = {
       try {
         const { program: name, user } = verifyProgramToken(token, program);
         return {
-          finished:
-            (await User.findOne({ email: user })).programs.filter(
-              (p) => p.name === name
-            )[0].currentDay > day,
+          finished: (await User.findOne({ email: user })).programs
+            .filter((p) => p.name === name)[0]
+            .finishedDays.includes(day),
           name
         };
       } catch (e) {
@@ -48,20 +47,26 @@ const programResolvers = {
         const { program: name, user } = verifyProgramToken(token, program);
         const u = (await User.findOne({ email: user }))._doc;
         return {
-          finished:
-            (
-              await User.findOneAndUpdate(
-                { email: user },
-                {
-                  ...u,
-                  programs: u.programs.map((p) => {
-                    p = p._doc;
-                    return p.name === name ? { ...p, currentDay: day + 1 } : p;
-                  })
-                },
-                { new: true }
-              )
-            ).programs.filter((p) => p.name === name)[0].currentDay > day,
+          finished: (
+            await User.findOneAndUpdate(
+              { email: user },
+              {
+                ...u,
+                programs: u.programs.map((p) => {
+                  p = p._doc;
+                  return p.name === name
+                    ? {
+                        ...p,
+                        finishedDays: [...p.finishedDays, day]
+                      }
+                    : p;
+                })
+              },
+              { new: true }
+            )
+          ).programs
+            .filter((p) => p.name === name)[0]
+            .finishedDays.includes(day),
           name
         };
       } catch (e) {

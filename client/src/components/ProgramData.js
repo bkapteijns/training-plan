@@ -81,9 +81,9 @@ export default function ProgramData({
               <ListGroup.Item
                 style={{ cursor: "pointer" }}
                 variant={
-                  own && n + 1 < data.currentDay
+                  own && data.finishedDays.includes(n + 1)
                     ? "success"
-                    : own && n + 1 === data.currentDay
+                    : own && Math.max(...data.finishedDays) === n
                     ? "warning"
                     : ""
                 }

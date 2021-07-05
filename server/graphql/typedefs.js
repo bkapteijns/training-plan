@@ -13,7 +13,7 @@ module.exports = gql`
     name: String!
     token: String!
     days: Int!
-    currentDay: Int!
+    finishedDays: [Int]
     equipment: [String]
     description: String!
     price: Int!
@@ -45,7 +45,7 @@ module.exports = gql`
   }
   type Mutation {
     login(userInput: UserInput): User!
-    finishProgram(program: String!, token: String, day: Int!): ProgramDay!
+    finishProgram(program: String!, token: String!, day: Int!): ProgramDay!
     addEquipment(token: String!, equipment: String!): User!
     removeEquipment(token: String!, equipment: String!): User!
   }

@@ -90,7 +90,10 @@ export default function Header({
             <Button
               variant="outline-light"
               style={{ marginRight: 5 }}
-              onClick={logout}
+              onClick={() => {
+                logout();
+                history.push("/");
+              }}
             >
               Log out
             </Button>

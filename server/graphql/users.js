@@ -42,7 +42,7 @@ const userResolvers = {
       const user = await new User({
         email,
         password: hash.sha256().update(`${email}-${password}`).digest("hex"),
-        programs: [{ name: "basic", currentDay: 1 }],
+        programs: [{ name: "basic", finishedDays: [] }],
         ownedEquipment: []
       });
       await user.save();
@@ -87,7 +87,7 @@ const userResolvers = {
             if (!program) return new UserInputError("program does not exist");
             return {
               ...program._doc,
-              currentDay: p.currentDay,
+              finishedDays: p.finishedDays,
               user: parent.email
             };
           })

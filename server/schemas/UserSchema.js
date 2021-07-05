@@ -7,7 +7,7 @@ const userSchema = new Schema({
     type: [
       {
         name: { type: String, required: true },
-        currentDay: { type: Number, required: true }
+        finishedDays: { type: [Number], required: false }
       }
     ],
     required: true

@@ -8,7 +8,7 @@ const successWebhook = async (req, res) => {
     return res.status(400).send("Event type is not charge.succeeded");
   const programs = event.data.object.description
     .split(",")
-    .map((p) => ({ name: p, currentDay: 1 }));
+    .map((p) => ({ name: p, finishedDays: [] }));
   const emailAddress = event.data.object.receipt_email;
   await User.updateOne(
     { email: emailAddress },

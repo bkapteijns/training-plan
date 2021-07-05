@@ -17,7 +17,7 @@ const relogin = async (
           name
           token
           days
-          currentDay
+          finishedDays
           equipment
           description
           price
