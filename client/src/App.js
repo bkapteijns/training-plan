@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Link } from "react-router-dom";
-import axios from "axios";
 import validator from "validator";
 // import serialize from "serialize-javascript"; This is used for setting tings as json.stringify(...)
 // import purify from "dompurify"; This is used for adding things to the dom
@@ -15,6 +14,12 @@ import ProgramScreen from "./screens/ProgramScreen";
 import LoginScreen from "./screens/LoginScreen";
 import BasketScreen from "./screens/BasketScreen";
 import EquipmentScreen from "./screens/EquipmentScreen";
+import {
+  removeEquipment,
+  addEquipment,
+  relogin,
+  getPrograms
+} from "./functions";
 
 const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
@@ -54,61 +59,9 @@ export default function App() {
         reloginToken &&
           !account &&
           validator.isJWT(reloginToken) &&
-          (await axios
-            .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-              query: `query reloginQuery($token: String!) {
-                relogin(token: $token) {
-                  token
-                  email
-                  ownedEquipment
-                  programs {
-                    name
-                    token
-                    days
-                    currentDay
-                    equipment
-                    description
-                    price
-                  }
-                }
-              }`,
-              variables: {
-                token: reloginToken
-              }
-            })
-            .then((res) => {
-              if (res.data.errors) setErrorToast(res.data.errors[0].message);
-              return res.data.data.relogin;
-            })
-            .then((data) => {
-              setAccount(data);
-              setReloginToken(data.token);
-            })
-            .catch((err) => {
-              setAccount(null);
-              setReloginToken(null);
-              console.log(err);
-            }));
+          relogin(reloginToken, setAccount, setReloginToken, setErrorToast);
 
-        !programs &&
-          (await axios
-            .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-              query: `query getProgramsQuery {
-                getPrograms {
-                  name
-                  days
-                  equipment
-                  description
-                  price
-                }
-              }`
-            })
-            .then((res) => {
-              if (res.data.errors) setErrorToast(res.data.errors[0].message);
-              return res.data.data.getPrograms;
-            })
-            .then((data) => setPrograms(data))
-            .catch((err) => console.log(err)));
+        !programs && getPrograms(setPrograms, setErrorToast);
       })(),
     []
   );
@@ -174,44 +127,8 @@ export default function App() {
                   : [...a.ownedEquipment, e]
             }));
             if (account && account.ownedEquipment.includes(e))
-              return axios
-                .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-                  query: `mutation removeEquipmentMutation($token: String!, $equipment: String!) {
-                    removeEquipment (token: $token, equipment: $equipment) {
-                      ownedEquipment
-                    }
-                  }`,
-                  variables: {
-                    token: account.token,
-                    equipment: e
-                  }
-                })
-                .then((r) => {
-                  if (r.data.errors) setErrorToast(r.data.errors[0].message);
-                  setAccount((a) => ({
-                    ...a,
-                    ownedEquipment: r.data.data.removeEquipment.ownedEquipment
-                  }));
-                });
-            return axios
-              .post(`${process.env.REACT_APP_SERVER_URI}api/graphql`, {
-                query: `mutation addEquipmentMutation($token: String!, $equipment: String!) {
-                  addEquipment (token: $token, equipment: $equipment) {
-                    ownedEquipment
-                  }
-                }`,
-                variables: {
-                  token: account.token,
-                  equipment: e
-                }
-              })
-              .then((r) => {
-                if (r.data.errors) setErrorToast(r.data.errors[0].message);
-                setAccount((a) => ({
-                  ...a,
-                  ownedEquipment: r.data.data.addEquipment.ownedEquipment
-                }));
-              });
+              return removeEquipment(e, account, setAccount, setErrorToast);
+            return addEquipment(e, account, setAccount, setErrorToast);
           }}
         />
       </Route>

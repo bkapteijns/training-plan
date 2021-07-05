@@ -20,7 +20,7 @@ export default function EquipmentScreen({ owned, setOwned, setErrorToast }) {
               return r.data.data.getEquipment;
             })
         ))(),
-    []
+    [setErrorToast]
   );
 
   if (!owned) return <div>Loading</div>;
