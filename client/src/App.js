@@ -56,12 +56,18 @@ export default function App() {
   useEffect(
     () =>
       (async () => {
+        console.log(typeof relogin, relogin);
         reloginToken &&
           !account &&
           validator.isJWT(reloginToken) &&
-          relogin(reloginToken, setAccount, setReloginToken, setErrorToast);
+          (await relogin(
+            reloginToken,
+            setAccount,
+            setReloginToken,
+            setErrorToast
+          ));
 
-        !programs && getPrograms(setPrograms, setErrorToast);
+        !programs && (await getPrograms(setPrograms, setErrorToast));
       })(),
     []
   );

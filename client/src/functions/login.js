@@ -13,7 +13,9 @@ const login = async (email, password, setAccount, setReloginToken) => {
             token
             days
             currentDay
+            description
             equipment
+            price
           }
         }
       }`,

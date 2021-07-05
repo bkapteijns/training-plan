@@ -1,6 +1,6 @@
-export const sendEmail = import("./sendEmail");
-export const login = import("./login");
-export const addEquipment = import("./addEquipment");
-export const removeEquipment = import("./removeEquipment");
-export const relogin = import("./relogin");
-export const getPrograms = import("./getPrograms");
+export const sendEmail = (async () => require("./sendEmail"))().default;
+export const login = require("./login").default;
+export const addEquipment = require("./addEquipment").default;
+export const removeEquipment = require("./removeEquipment").default;
+export const relogin = require("./relogin").default;
+export const getPrograms = require("./getPrograms").default;
