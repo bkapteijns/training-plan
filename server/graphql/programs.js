@@ -1,9 +1,9 @@
 const { UserInputError } = require("apollo-server");
 require("dotenv").config();
 
-const Program = require("../ProgramSchema");
 const { createProgramToken, verifyProgramToken } = require("../utils");
-const User = require("../UserSchema");
+const User = require("../schemas/UserSchema");
+const Program = require("../schemas/ProgramSchema");
 
 const programResolvers = {
   Program: {

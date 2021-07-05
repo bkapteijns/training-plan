@@ -6,6 +6,7 @@ const failedWebhook = async (req, res) => {
   if (!["payment_intent.payment_failed", "charge.failed"].includes(event.type))
     return res.sendStatus(400);
   await stripe.paymentIntents.cancel(event.data.object.id);
+  res.json({ received: true });
 };
 
 module.exports = failedWebhook;

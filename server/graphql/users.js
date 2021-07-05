@@ -3,9 +3,9 @@ const { UserInputError, AuthenticationError } = require("apollo-server");
 const validator = require("validator");
 require("dotenv").config();
 
-const User = require("../UserSchema");
-const Program = require("../ProgramSchema");
 const { createUserToken, verifyUserToken } = require("../utils");
+const User = require("../schemas/UserSchema");
+const Program = require("../schemas/ProgramSchema");
 
 const userResolvers = {
   Query: {

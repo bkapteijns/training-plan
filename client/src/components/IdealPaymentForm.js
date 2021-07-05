@@ -12,7 +12,6 @@ export default function IdealPaymentForm({ emailAddress, items }) {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState("");
   const [disabled, setDisabled] = useState(true);
-  // const [clientSecret, setClientSecret] = useState("");
 
   const stripe = useStripe();
   const elements = useElements();
@@ -28,7 +27,7 @@ export default function IdealPaymentForm({ emailAddress, items }) {
 
     await axios
       .post(
-        `${process.env.REACT_APP_SERVER_URI}api/create-payment-intent`,
+        `${process.env.REACT_APP_SERVER_URI}api/stripe/create-payment-intent`,
         { items, emailAddress },
         {
           headers: { "Content-Type": "application/json" }

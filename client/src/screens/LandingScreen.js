@@ -79,7 +79,7 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                       .then(() => {
                         axios
                           .post(
-                            `${process.env.REACT_APP_SERVER_URI}api/send-introduction-email`,
+                            `${process.env.REACT_APP_SERVER_URI}api/emails/send-introduction-email`,
                             {
                               emailAddress: values.email
                             }
@@ -187,7 +187,7 @@ export default function LandingScreen({ setAccount, setReloginToken }) {
                     setSubmitting(true);
                     await axios
                       .post(
-                        `${process.env.REACT_APP_SERVER_URI}api/send-introduction-email`,
+                        `${process.env.REACT_APP_SERVER_URI}api/emails/send-introduction-email`,
                         {
                           emailAddress: values.email
                         }

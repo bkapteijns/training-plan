@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 
-const Program = require("./ProgramSchema");
+const Program = require("./schemas/ProgramSchema");
 
 module.exports = {
   createProgramToken: (program, user) => {
