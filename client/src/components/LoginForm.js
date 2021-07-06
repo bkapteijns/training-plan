@@ -45,7 +45,7 @@ export default function LoginScreen({
         setOldEmail(values.email);
         setOldPassword(values.password);
         login(values.email, values.password, setAccount, setReloginToken)
-          .then(() => onSubmitExtra(values))
+          .then(() => onSubmitExtra && onSubmitExtra(values))
           .then(() => resetForm())
           .then(() => history.push("/"))
           .catch((err) => {
