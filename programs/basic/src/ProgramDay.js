@@ -35,9 +35,9 @@ export default function ProgramDay() {
   return (
     <Container>
       <Row>
-        <ListGroup horizontal>
+        <ListGroup className="w-100" horizontal>
           <ListGroup.Item
-            className="flex-fill text-start"
+            className="w-50"
             style={{ cursor: "pointer" }}
             disabled={day == 1}
             onClick={() =>
@@ -47,7 +47,7 @@ export default function ProgramDay() {
             Previous
           </ListGroup.Item>
           <ListGroup.Item
-            className="flex-fill text-end"
+            className="w-50 text-right"
             style={{ cursor: "pointer" }}
             disabled={day == 30}
             onClick={() =>
