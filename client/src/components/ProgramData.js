@@ -89,12 +89,7 @@ export default function ProgramData({
                 }
                 key={n}
                 onClick={() =>
-                  own &&
-                  window.open(
-                    `${process.env.REACT_APP_SERVER_URI}program/${data.name}/${
-                      n + 1
-                    }?token=${data.token}`
-                  )
+                  own && history.push(`/program/${data.name}/${n + 1}`)
                 }
               >
                 Day {(n + 1).toString()}

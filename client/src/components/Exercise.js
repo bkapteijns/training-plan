@@ -1,11 +1,12 @@
 import React from "react";
 import { Row, Col, ListGroup } from "react-bootstrap";
+import purify from "dompurify";
 // import axios from "axios"; Will be needed when wanting to show a video of the exercise
 
 export default function Exercise({
-  children,
   name,
-  amount,
+  repetitions,
+  description,
   expanded,
   setExpanded
 }) {
@@ -13,7 +14,7 @@ export default function Exercise({
     <div style={{ marginBottom: 10 }}>
       <ListGroup.Item onClick={setExpanded} style={{ cursor: "pointer" }}>
         <div>
-          {name}, {amount}
+          {name}, {repetitions}
         </div>
       </ListGroup.Item>
       {expanded && (
@@ -31,7 +32,9 @@ export default function Exercise({
           </video>
           <p>Click the video to play/pause</p>
           <Row style={{ justifyContent: "center" }}>
-            <Col md={10}>{children}</Col>
+            <Col md={10}>
+              <div>{purify(window).sanitize(description)}</div>
+            </Col>
           </Row>
         </ListGroup.Item>
       )}

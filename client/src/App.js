@@ -119,7 +119,11 @@ export default function App() {
         />
       </Route>
       <Route path="/program/:program/:day">
-        <DayScreen account={account} setErrorToast={setErrorToast} />
+        <DayScreen
+          account={account}
+          setErrorToast={setErrorToast}
+          programs={programs}
+        />
       </Route>
       <Route path="/equipment">
         <EquipmentScreen
