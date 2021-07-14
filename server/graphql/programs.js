@@ -41,13 +41,9 @@ const programResolvers = {
       "cable machine"
     ],
     getDay: async (parent, { program, token, day }) => {
-      try {
-        verifyProgramToken(token, program);
+      if (verifyProgramToken(token, program))
         return (await Day.findOne({ program, day }))._doc.exercises;
-      } catch (e) {
-        console.log(e);
-        return [];
-      }
+      else return [];
     }
   },
 

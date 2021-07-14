@@ -42,6 +42,4 @@ const relogin = async (
       console.log(err);
     });
 
-console.log(typeof relogin);
-
 export default relogin;

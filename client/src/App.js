@@ -21,6 +21,7 @@ import {
   getPrograms,
   logout
 } from "./functions";
+import DayScreen from "./screens/DayScreen";
 
 const useLocalStorage = (item) => {
   const [state, rawSetState] = useState(
@@ -57,7 +58,6 @@ export default function App() {
   useEffect(
     () =>
       (async () => {
-        console.log(typeof relogin, relogin);
         reloginToken &&
           !account &&
           validator.isJWT(reloginToken) &&
@@ -117,6 +117,9 @@ export default function App() {
           programData={programs}
           addToBasket={(item) => setBasket([...basket, item])}
         />
+      </Route>
+      <Route path="/program/:program/:day">
+        <DayScreen account={account} setErrorToast={setErrorToast} />
       </Route>
       <Route path="/equipment">
         <EquipmentScreen
