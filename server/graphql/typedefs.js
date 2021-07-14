@@ -8,11 +8,16 @@ module.exports = gql`
     ownedEquipment: [String]
     programs: [Program]
   }
+  type Exercise {
+    name: String!
+    repetitions: String!
+    description: String!
+  }
   type Program {
     _id: ID!
     name: String!
     token: String!
-    days: Int!
+    length: Int!
     finishedDays: [Int]
     equipment: [String]
     description: String!
@@ -21,7 +26,7 @@ module.exports = gql`
   type PublicProgram {
     _id: ID!
     name: String!
-    days: Int!
+    length: Int!
     equipment: [String]
     description: String!
     price: Int!
@@ -42,6 +47,7 @@ module.exports = gql`
     getPrograms: [PublicProgram]
     getProgram(program: String!, token: String!, day: Int!): ProgramDay!
     getEquipment: [String]
+    getDay(program: String!, token: String!, day: Int!): [Exercise]
   }
   type Mutation {
     login(userInput: UserInput): User!

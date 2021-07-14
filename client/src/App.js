@@ -70,7 +70,7 @@ export default function App() {
 
         !programs && (await getPrograms(setPrograms, setErrorToast));
       })(),
-    []
+    [account, programs, reloginToken, setReloginToken]
   );
 
   return (

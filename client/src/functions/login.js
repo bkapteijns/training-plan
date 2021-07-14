@@ -11,7 +11,7 @@ const login = async (email, password, setAccount, setReloginToken) => {
           programs {
             name
             token
-            days
+            length
             finishedDays
             description
             equipment

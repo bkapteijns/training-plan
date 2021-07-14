@@ -6,7 +6,7 @@ const getPrograms = async (setPrograms, setErrorToast) =>
       query: `query getProgramsQuery {
       getPrograms {
         name
-        days
+        length
         equipment
         description
         price

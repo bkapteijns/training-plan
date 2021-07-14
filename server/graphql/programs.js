@@ -4,6 +4,7 @@ require("dotenv").config();
 const { createProgramToken, verifyProgramToken } = require("../utils");
 const User = require("../schemas/UserSchema");
 const Program = require("../schemas/ProgramSchema");
+const Day = require("../schemas/DaySchema");
 
 const programResolvers = {
   Program: {
@@ -38,7 +39,16 @@ const programResolvers = {
       "bench",
       "squat rack",
       "cable machine"
-    ]
+    ],
+    getDay: async (parent, { program, token, day }) => {
+      try {
+        verifyProgramToken(token, program);
+        return (await Day.findOne({ program, day }))._doc.exercises;
+      } catch (e) {
+        console.log(e);
+        return [];
+      }
+    }
   },
 
   Mutation: {

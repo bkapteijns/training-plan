@@ -13,7 +13,6 @@ module.exports = {
     try {
       if (!validator.isJWT(token)) throw new Error("Token must be valid JWT");
       return (
-        jwt.verify(token, process.env.SECRET_KEY).program === program &&
         jwt.verify(token, process.env.SECRET_KEY)
       );
     } catch (e) {

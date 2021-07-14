@@ -77,7 +77,7 @@ export default function ProgramData({
         </Col>
         <Col md={3}>
           <ListGroup>
-            {[...Array(data.days).keys()].map((n) => (
+            {[...Array(data.length).keys()].map((n) => (
               <ListGroup.Item
                 style={{ cursor: "pointer" }}
                 variant={

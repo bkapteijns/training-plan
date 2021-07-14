@@ -16,7 +16,7 @@ const relogin = async (
         programs {
           name
           token
-          days
+          length
           finishedDays
           equipment
           description
