@@ -3,9 +3,14 @@ import { useParams, useHistory } from "react-router-dom";
 import { Container, Row, Col, ListGroup, Button } from "react-bootstrap";
 
 import Exercise from "../components/Exercise";
-import { getDay } from "../functions/index";
+import { getDay, finishDay } from "../functions/index";
 
-export default function DayScreen({ account, setErrorToast, programs }) {
+export default function DayScreen({
+  account,
+  setErrorToast,
+  programs,
+  setAccount
+}) {
   const [plan, setPlan] = useState();
   const [expanded, setExpanded] = useState();
 
@@ -61,6 +66,7 @@ export default function DayScreen({ account, setErrorToast, programs }) {
                 (e) =>
                   e && (
                     <Exercise
+                      key={e.name}
                       name={e.name}
                       repetitions={e.repetitions}
                       description={e.description}
@@ -75,6 +81,21 @@ export default function DayScreen({ account, setErrorToast, programs }) {
               )
             : "Loading"}
         </Col>
+      </Row>
+      <Row style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          onClick={() =>
+            finishDay(
+              program,
+              day,
+              account.programs.filter((p) => p.name === program)[0].token,
+              setAccount
+            )
+          }
+          variant="success"
+        >
+          Finish day
+        </Button>
       </Row>
     </Container>
   );

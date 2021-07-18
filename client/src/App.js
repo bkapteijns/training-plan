@@ -123,6 +123,7 @@ export default function App() {
           account={account}
           setErrorToast={setErrorToast}
           programs={programs}
+          setAccount={setAccount}
         />
       </Route>
       <Route path="/equipment">

@@ -16,20 +16,6 @@ const programResolvers = {
 
   Query: {
     getPrograms: async () => (await Program.find()).map((p) => ({ ...p._doc })),
-    getProgram: async (parent, { program, token, day }) => {
-      try {
-        const { program: name, user } = verifyProgramToken(token, program);
-        return {
-          finished: (await User.findOne({ email: user })).programs
-            .filter((p) => p.name === name)[0]
-            .finishedDays.includes(day),
-          name
-        };
-      } catch (e) {
-        console.log(e);
-        return { name: "basic", finished: false };
-      }
-    },
     getEquipment: async () => [
       "dumbbells",
       "resistance band",
@@ -48,36 +34,33 @@ const programResolvers = {
   },
 
   Mutation: {
-    finishProgram: async (parent, { program, token, day }) => {
+    finishDay: async (parent, { program, token, day }) => {
       try {
         const { program: name, user } = verifyProgramToken(token, program);
         const u = (await User.findOne({ email: user }))._doc;
-        return {
-          finished: (
-            await User.findOneAndUpdate(
-              { email: user },
-              {
-                ...u,
-                programs: u.programs.map((p) => {
-                  p = p._doc;
-                  return p.name === name
-                    ? {
-                        ...p,
-                        finishedDays: [...p.finishedDays, day]
-                      }
-                    : p;
-                })
-              },
-              { new: true }
-            )
-          ).programs
-            .filter((p) => p.name === name)[0]
-            .finishedDays.includes(day),
-          name
-        };
+        return (
+          await User.findOneAndUpdate(
+            { email: user },
+            {
+              ...u,
+              programs: u.programs.map((p) => {
+                p = p._doc;
+                return p.name === name
+                  ? {
+                      ...p,
+                      finishedDays: [...p.finishedDays, day]
+                    }
+                  : p;
+              })
+            },
+            { new: true }
+          )
+        ).programs
+          .filter((p) => p.name === name)[0]
+          .finishedDays.includes(day);
       } catch (e) {
         console.log(e);
-        return { name: "basic", finished: false };
+        return false;
       }
     }
   }

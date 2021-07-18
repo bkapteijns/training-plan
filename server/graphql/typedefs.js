@@ -31,11 +31,6 @@ module.exports = gql`
     description: String!
     price: Int!
   }
-  type ProgramDay {
-    _id: ID!
-    name: String!
-    finished: Boolean!
-  }
 
   input UserInput {
     email: String!
@@ -45,13 +40,12 @@ module.exports = gql`
   type Query {
     relogin(token: String!): User!
     getPrograms: [PublicProgram]
-    getProgram(program: String!, token: String!, day: Int!): ProgramDay!
     getEquipment: [String]
     getDay(program: String!, token: String!, day: Int!): [Exercise]
   }
   type Mutation {
     login(userInput: UserInput): User!
-    finishProgram(program: String!, token: String!, day: Int!): ProgramDay!
+    finishDay(program: String!, token: String!, day: Int!): Boolean!
     addEquipment(token: String!, equipment: String!): User!
     removeEquipment(token: String!, equipment: String!): User!
   }
