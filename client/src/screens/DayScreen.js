@@ -37,7 +37,7 @@ export default function DayScreen({ account, setErrorToast, programs }) {
               day != 1 && history.push(`/program/${program}/${day - 1}`)
             }
           >
-            Previous day
+            {day != 1 && "Previous day"}
           </ListGroup.Item>
           <ListGroup.Item
             className="flex-grow-1 text-right"
@@ -48,26 +48,31 @@ export default function DayScreen({ account, setErrorToast, programs }) {
               history.push(`/program/${program}/${parseInt(day) + 1}`)
             }
           >
-            Next day
+            {programs &&
+              day != programs.filter((p) => p.name === program)[0].length &&
+              "Next day"}
           </ListGroup.Item>
         </ListGroup>
       </Row>
       <Row>
         <Col>
           {plan
-            ? plan.map((e) => (
-                <Exercise
-                  name={e.name}
-                  repetitions={e.repetitions}
-                  description={e.description}
-                  expanded={expanded === e.name}
-                  setExpanded={() =>
-                    expanded === e.name
-                      ? setExpanded(null)
-                      : setExpanded(e.name)
-                  }
-                />
-              ))
+            ? plan.map(
+                (e) =>
+                  e && (
+                    <Exercise
+                      name={e.name}
+                      repetitions={e.repetitions}
+                      description={e.description}
+                      expanded={expanded === e.name}
+                      setExpanded={() =>
+                        expanded === e.name
+                          ? setExpanded(null)
+                          : setExpanded(e.name)
+                      }
+                    />
+                  )
+              )
             : "Loading"}
         </Col>
       </Row>

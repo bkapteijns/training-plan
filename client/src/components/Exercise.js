@@ -14,7 +14,8 @@ export default function Exercise({
     <div style={{ marginBottom: 10 }}>
       <ListGroup.Item onClick={setExpanded} style={{ cursor: "pointer" }}>
         <div>
-          {name}, {repetitions}
+          {name}
+          {repetitions.length > 0 && `, ${repetitions}`}
         </div>
       </ListGroup.Item>
       {expanded && (
