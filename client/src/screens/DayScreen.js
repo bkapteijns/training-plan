@@ -31,7 +31,12 @@ export default function DayScreen({
   return (
     <Container>
       <Row className="justify-content-center">
-        <h1>Day {day}</h1>
+        <h1>
+          Day {day}
+          {account.programs
+            .filter((p) => p.name === program)[0]
+            .finishedDays.includes(parseInt(day)) && ", finished"}
+        </h1>
       </Row>
       <Row>
         <ListGroup className="w-100 mb-3" horizontal>

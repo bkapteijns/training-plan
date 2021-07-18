@@ -2,12 +2,15 @@ import React from "react";
 import { Container, Row, Col, Button, ListGroup } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
+import { restartProgram } from "../functions/index";
+
 export default function ProgramData({
   data,
   ownedEquipment,
   own,
   addToBasket,
-  loggedIn
+  loggedIn,
+  setAccount
 }) {
   const history = useHistory();
 
@@ -63,7 +66,7 @@ export default function ProgramData({
               </ListGroup>
             </Col>
           </Row>
-          {!own && (
+          {!own ? (
             <>
               <h2>Purchase</h2>
               <Button onClick={() => addToBasket(data.name)}>
@@ -72,6 +75,21 @@ export default function ProgramData({
                   ? "FREE"
                   : "€" + parseFloat(data.price / 100).toFixed(2)}
               </Button>
+            </>
+          ) : (
+            <>
+              <h2>Restart</h2>
+              <Col>
+                <p>
+                  If you want to do this program again, you can press the
+                  restart button.
+                </p>
+                <Button
+                  onClick={() => restartProgram(data.name, own, setAccount)}
+                >
+                  Restart
+                </Button>
+              </Col>
             </>
           )}
         </Col>

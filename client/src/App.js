@@ -114,6 +114,7 @@ export default function App() {
       <Route path="/programs/:programName">
         <ProgramScreen
           account={account}
+          setAccount={setAccount}
           programData={programs}
           addToBasket={(item) => setBasket([...basket, item])}
         />
