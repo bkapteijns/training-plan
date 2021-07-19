@@ -19,16 +19,20 @@ export default function DayScreen({
 
   useEffect(() => {
     if (account)
-      getDay(
-        account.programs.filter((p) => p.name === program)[0].token,
-        program,
-        day,
-        setPlan,
-        setErrorToast
-      );
+      try {
+        getDay(
+          account.programs.filter((p) => p.name === program)[0].token,
+          program,
+          day,
+          setPlan,
+          setErrorToast
+        );
+      } catch (e) {
+        console.log(e);
+      }
   }, [account, program, day, setErrorToast]);
 
-  return (
+  return plan ? (
     <Container>
       <Row className="justify-content-center">
         <h1>
@@ -103,5 +107,7 @@ export default function DayScreen({
         </Button>
       </Row>
     </Container>
+  ) : (
+    <div>Loading</div>
   );
 }
