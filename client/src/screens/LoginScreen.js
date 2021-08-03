@@ -5,7 +5,7 @@ import LoginForm from "../components/LoginForm";
 
 export default function LoginScreen({ setAccount, setReloginToken }) {
   return (
-    <Container>
+    <Container style={{ marginTop: 100 }}>
       <Row>
         <Col>
           <LoginForm

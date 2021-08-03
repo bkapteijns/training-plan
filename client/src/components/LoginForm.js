@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import validator from "validator";
 import { useHistory } from "react-router-dom";
 
@@ -14,6 +14,7 @@ export default function LoginScreen({
   const [serverErrors, setServerErrors] = useState();
   const [oldEmail, setOldEmail] = useState();
   const [oldPassword, setOldPassword] = useState();
+  const [showPassword, setShowPassword] = useState();
 
   const history = useHistory();
 
@@ -92,27 +93,36 @@ export default function LoginScreen({
               <Form.Label>Password</Form.Label>
             </Col>
             <Col md={8}>
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                isValid={!errors.password && touched.password}
-                isInvalid={!!errors.password && touched.password}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.password}
-              </Form.Control.Feedback>
-              <Form.Control.Feedback type="valid">
-                {validator.isStrongPassword(values.password, {
-                  minLength: 12,
-                  minLowercase: 1,
-                  minUppercase: 1,
-                  minNumbers: 1
-                }) && "Very strong!"}
-              </Form.Control.Feedback>
+              <InputGroup>
+                <Form.Control
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                  isValid={!errors.password && touched.password}
+                  isInvalid={!!errors.password && touched.password}
+                  aria-describedby="showAddOn"
+                />
+                <InputGroup.Text
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowPassword((s) => !s)}
+                >
+                  Show
+                </InputGroup.Text>
+                <Form.Control.Feedback type="invalid">
+                  {errors.password}
+                </Form.Control.Feedback>
+                <Form.Control.Feedback type="valid">
+                  {validator.isStrongPassword(values.password, {
+                    minLength: 12,
+                    minLowercase: 1,
+                    minUppercase: 1,
+                    minNumbers: 1
+                  }) && "Very strong!"}
+                </Form.Control.Feedback>
+              </InputGroup>
             </Col>
           </Form.Group>
           <Form.Row

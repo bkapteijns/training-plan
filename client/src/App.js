@@ -95,6 +95,7 @@ export default function App() {
       </Route>
       <Route path="/landing">
         <LandingScreen
+          loggedIn={account && account.token}
           setAccount={setAccount}
           setReloginToken={setReloginToken}
         />

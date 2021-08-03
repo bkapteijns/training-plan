@@ -101,7 +101,9 @@ export default function ProgramData({
                 variant={
                   own && data.finishedDays.includes(n + 1)
                     ? "success"
-                    : own && Math.max(...data.finishedDays) === n
+                    : own &&
+                      (Math.max(...data.finishedDays) === n ||
+                        (data.finishedDays.length === 0 && n === 0))
                     ? "warning"
                     : ""
                 }
