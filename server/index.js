@@ -5,13 +5,11 @@ const path = require("path");
 const { ApolloServer } = require("apollo-server-express");
 
 const { typeDefs, resolvers } = require("./graphql/index");
-const stripeRoutes = require("./rest/routes/stripe/index");
 const emailRoutes = require("./rest/routes/emails/index");
 
 const app = express();
 
 /**************** REST endpoint */
-app.use("/api/stripe", stripeRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {

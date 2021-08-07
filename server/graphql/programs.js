@@ -20,6 +20,7 @@ const programResolvers = {
       "dumbbells",
       "resistance band",
       "pullup bar",
+      "dip bar",
       "barbell",
       "yoga mat",
       "bench",
