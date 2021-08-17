@@ -7,16 +7,15 @@ import validator from "validator";
 
 import Header from "./components/Header";
 import ErrorToaster from "./components/ErrorToaster";
-import PaymentScreen from "./screens/PaymentScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProgramsScreen from "./screens/ProgramsScreen";
 import ProgramScreen from "./screens/ProgramScreen";
 import LoginScreen from "./screens/LoginScreen";
-import BasketScreen from "./screens/BasketScreen";
 import EquipmentScreen from "./screens/EquipmentScreen";
 import {
   removeEquipment,
   addEquipment,
+  addProgram,
   relogin,
   getPrograms,
   logout
@@ -53,7 +52,6 @@ export default function App() {
   const [errorToast, setErrorToast] = useState();
   const [moveToast, setMoveToast] = useState();
   const [reloginToken, setReloginToken] = useLocalStorage("reloginToken");
-  const [basket, setBasket] = useSessionStorage("basket");
 
   useEffect(
     () =>
@@ -80,7 +78,6 @@ export default function App() {
         logout={() => logout(setAccount, setReloginToken)}
         ownedPrograms={account ? account.programs : []}
         allPrograms={programs}
-        basket={basket}
         setMoveToast={setMoveToast}
       />
       {errorToast && (
@@ -117,7 +114,11 @@ export default function App() {
           account={account}
           setAccount={setAccount}
           programData={programs}
-          addToBasket={(item) => setBasket([...basket, item])}
+          addProgram={(program) =>
+            account.token
+              ? addProgram(account.token, program, setAccount, setErrorToast)
+              : setErrorToast("Log in first")
+          }
         />
       </Route>
       <Route path="/program/:program/:day">
@@ -145,23 +146,6 @@ export default function App() {
             return addEquipment(e, account, setAccount, setErrorToast);
           }}
         />
-      </Route>
-      <Route path="/basket">
-        <BasketScreen
-          basket={basket}
-          setBasket={setBasket}
-          programData={programs}
-        />
-      </Route>
-      <Route path="/payment">
-        <PaymentScreen
-          emailAddress={account && account.email}
-          basket={basket}
-          setErrorToast={setErrorToast}
-        />
-      </Route>
-      <Route path="/checkout">
-        <div>Thanks for your purchase!</div>
       </Route>
     </BrowserRouter>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
@@ -6,18 +6,13 @@ export default function Header({
   loggedIn,
   logout,
   ownedPrograms,
-  allPrograms,
-  basket,
-  setMoveToast
+  allPrograms
 }) {
   const [programsExpanded, setProgramsExpanded] = useState(false);
-  const [basketExpanded, setBasketExpanded] = useState(false);
   const history = useHistory();
 
-  useEffect(() => setMoveToast(basketExpanded), [basketExpanded, setMoveToast]);
-
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
+    <Navbar bg="dark" variant="dark" expand="lg" style={{ zIndex: 999 }}>
       <Navbar.Brand onClick={() => history.push("/")}>
         trainingplan.fitness
       </Navbar.Brand>
@@ -105,37 +100,6 @@ export default function Header({
             >
               Login or register
             </Button>
-          )}
-          {basket && basket.length > 0 && (
-            <NavDropdown
-              title={
-                <span onClick={() => history.push("/basket")}>Basket</span>
-              }
-              id="shopping-basket-dropdown"
-              alignRight
-              show={basketExpanded}
-              onMouseEnter={() => setBasketExpanded(true)}
-              onMouseLeave={() => setBasketExpanded(false)}
-            >
-              <NavDropdown.Header>Programs</NavDropdown.Header>
-              {basket.map((i) => (
-                <NavDropdown.Item
-                  key={i}
-                  onClick={() => history.push(`/programs/${i}`)}
-                >
-                  {i
-                    .trim()
-                    .toLowerCase()
-                    .replace(/\w\S*/g, (w) =>
-                      w.replace(/^\w/, (c) => c.toUpperCase())
-                    )}
-                </NavDropdown.Item>
-              ))}
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={() => history.push("/payment")}>
-                Purchase now
-              </NavDropdown.Item>
-            </NavDropdown>
           )}
         </Nav>
       </Navbar.Collapse>

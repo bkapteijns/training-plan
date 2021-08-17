@@ -48,6 +48,7 @@ module.exports = gql`
     finishDay(program: String!, token: String!, day: Int!): Boolean!
     restartProgram(program: String!, token: String!): Boolean!
     addEquipment(token: String!, equipment: String!): User!
+    addProgram(token: String!, program: String!): User!
     removeEquipment(token: String!, equipment: String!): User!
   }
 `;

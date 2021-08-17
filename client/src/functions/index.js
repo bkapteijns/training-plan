@@ -8,3 +8,4 @@ export const logout = require("./logout").default;
 export const getDay = require("./getDay").default;
 export const finishDay = require("./finishDay").default;
 export const restartProgram = require("./restartProgram").default;
+export const addProgram = require("./addProgram").default;

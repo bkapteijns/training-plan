@@ -61,6 +61,23 @@ const userResolvers = {
         return new UserInputError("Token must be a valid JWT");
       }
     },
+    addProgram: async (parent, { token, program }) => {
+      try {
+        const { _id } = verifyUserToken(token);
+        const user = await User.updateOne(
+          { _id },
+          {
+            $push: {
+              programs: { finishedDays: [], name: program }
+            }
+          },
+          { new: true }
+        );
+        return user._doc;
+      } catch (e) {
+        return new UserInputError("Token must be a valid JWT");
+      }
+    },
     removeEquipment: async (parent, { token, equipment }) => {
       try {
         const { _id } = verifyUserToken(token);

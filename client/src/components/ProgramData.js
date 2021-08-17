@@ -8,9 +8,9 @@ export default function ProgramData({
   data,
   ownedEquipment,
   own,
-  addToBasket,
   loggedIn,
-  setAccount
+  setAccount,
+  addProgram
 }) {
   const history = useHistory();
 
@@ -68,13 +68,8 @@ export default function ProgramData({
           </Row>
           {!own ? (
             <>
-              <h2>Purchase</h2>
-              <Button onClick={() => addToBasket(data.name)}>
-                Buy the program -{" "}
-                {data.price === 0
-                  ? "FREE"
-                  : "€" + parseFloat(data.price / 100).toFixed(2)}
-              </Button>
+              <h2>Get the program</h2>
+              <Button onClick={() => addProgram(data.name)}>Get</Button>
             </>
           ) : (
             <>

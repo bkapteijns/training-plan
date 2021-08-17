@@ -7,7 +7,7 @@ export default function ProgramScreen({
   account,
   setAccount,
   programData,
-  addToBasket
+  addProgram
 }) {
   const params = useParams();
 
@@ -35,8 +35,9 @@ export default function ProgramScreen({
       <ProgramData
         data={programData.filter((p) => p.name === params.programName)[0]}
         ownedEquipment={account ? account.ownedEquipment : []}
-        addToBasket={addToBasket}
         loggedIn={account && account.token}
+        setAccount={setAccount}
+        addProgram={(program) => addProgram(program)}
       />
     );
   } else return <div>Program not found</div>;

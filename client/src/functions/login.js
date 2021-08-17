@@ -24,6 +24,7 @@ const login = async (email, password, setAccount, setReloginToken) => {
       }
     })
     .then((res) => {
+      console.log(res);
       if (res.data.errors) throw new Error(res.data.errors[0].message);
       return res.data.data.login;
     })
